@@ -8,6 +8,7 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
+  sendPasswordResetEmail,
   signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
@@ -28,6 +29,7 @@ const showRegisterBtn = document.getElementById("showRegister");
 const registerPanel = document.getElementById("registerPanel");
 const submitRegisterBtn = document.getElementById("submitRegister");
 const googleLoginBtn = document.getElementById("googleLogin");
+const forgotPasswordBtn = document.getElementById("forgotPassword");
 
 // Giriş yapma
 loginBtn.addEventListener("click", async () => {
@@ -134,6 +136,22 @@ googleLoginBtn.addEventListener("click", async () => {
     window.location.href = "/home/home.html";
   } catch (error) {
     alert("❌ Google ile giriş başarısız: " + error.message);
+  }
+});
+
+// Şifremi unuttum
+forgotPasswordBtn.addEventListener("click", async () => {
+  const email = document.getElementById("loginEmail").value.trim();
+  if (!email) {
+    alert("📧 Şifre sıfırlama için lütfen e-posta adresinizi girin.");
+    return;
+  }
+
+  try {
+    await sendPasswordResetEmail(auth, email);
+    alert("📩 Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.");
+  } catch (error) {
+    alert("⚠️ Şifre sıfırlama başarısız: " + error.message);
   }
 });
 
