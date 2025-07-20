@@ -185,10 +185,18 @@
 
   <script type="module" src="/login/script.js"></script>
   <script>
-    // Sadece Kaydol panelini aç
-    document.getElementById("showRegister").addEventListener("click", () => {
-      document.getElementById("registerPanel").style.display = "block";
+    <script>
+  // Sadece Kaydol panelini aç
+  document.getElementById("showRegister").addEventListener("click", () => {
+    document.getElementById("registerPanel").style.display = "block";
+   );
+
+  // Kayıt butonunun DOM yüklendikten sonra da çalışmasını garanti altına al
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("submitRegister")?.addEventListener("click", () => {
+      import("/login/script.js");
     });
+   );
   </script>
 </body>
 </html>
