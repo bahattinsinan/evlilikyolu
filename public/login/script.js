@@ -104,8 +104,8 @@ submitRegisterBtn.addEventListener("click", async () => {
     });
 
     await sendEmailVerification(user, {
-  url: "https://evlilikyolutr.firebaseapp.com/login/verify-success.html"
- });
+  url: "https://evlilikyolutr.netlify.app/login/verify-success.html"
+});
     alert("✅ Kayıt başarılı! E-posta adresinize doğrulama bağlantısı gönderildi.\n\n📩 Lütfen gelen kutunuzu ve spam klasörünü kontrol edin.");
     await signOut(auth);
   } catch (error) {
