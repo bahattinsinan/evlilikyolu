@@ -103,7 +103,9 @@ submitRegisterBtn.addEventListener("click", async () => {
       tokens: 0
     });
 
-    await sendEmailVerification(user);
+    await sendEmailVerification(user, {
+  url: "https://evlilikyolutr.firebaseapp.com/login/verify-success.html"
+ });
     alert("✅ Kayıt başarılı! E-posta adresinize doğrulama bağlantısı gönderildi.\n\n📩 Lütfen gelen kutunuzu ve spam klasörünü kontrol edin.");
     await signOut(auth);
   } catch (error) {
