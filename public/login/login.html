@@ -2,138 +2,189 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Evlilik Yolu - Giriş & Kayıt</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Evlilik Yolu - Giriş</title>
   <style>
-    body {
+    * {
+      box-sizing: border-box;
       margin: 0;
+      padding: 0;
+    }
+
+    body {
       font-family: Arial, sans-serif;
       background: url('/images/login1.png') no-repeat center center fixed;
       background-size: cover;
       color: #fff;
-    }
-    .container {
-      background-color: rgba(0, 0, 0, 0.6);
-      max-width: 500px;
-      margin: 50px auto;
-      padding: 20px;
-      border-radius: 12px;
-    }
-    input, select, button {
-      display: block;
-      width: 100%;
-      margin: 10px 0;
-      padding: 10px;
-      font-size: 16px;
-    }
-    .highlights {
-      background-color: #ffc0cb;
-      color: #000;
-      padding: 10px;
-      border-radius: 10px;
-      margin-bottom: 15px;
-      text-align: center;
-    }
-    .gallery {
       display: flex;
       justify-content: center;
-      margin-top: 20px;
+      align-items: flex-start;
+      min-height: 100vh;
+      flex-direction: column;
+      padding: 20px;
     }
-    .gallery img {
-      display: none;
+
+    .login-box, .register-panel {
+      background-color: rgba(0, 0, 0, 0.75);
+      padding: 20px;
+      border-radius: 12px;
       width: 100%;
-      max-width: 500px;
-      border-radius: 10px;
+      max-width: 400px;
+      margin: 10px auto;
+      text-align: center;
     }
-    .gallery img.visible {
-      display: block;
+
+    .login-box h2 {
+      margin-bottom: 20px;
     }
-    .kvkk {
-      font-size: 12px;
-      background: rgba(255,255,255,0.9);
-      color: #000;
+
+    input {
+      width: 100%;
       padding: 10px;
-      margin-top: 20px;
-      border-radius: 8px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
     }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background-color: #ff69b4;
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background-color: #fff;
+      color: #000;
+    }
+
+    .register-panel {
+      display: none;
+      background-color: rgba(255,255,255,0.95);
+      color: #000;
+    }
+
+    .register-panel input, .register-panel select {
+      border: 1px solid #ccc;
+      color: #000;
+    }
+
+    .gender-options {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .gender-options button {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    .gender-male {
+      background-color: #add8e6;
+      color: #000;
+    }
+
+    .gender-female {
+      background-color: #ffb6c1;
+      color: #000;
+    }
+
+    .info-icons {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #000;
+    }
+
+    .info-icons div {
+      margin: 5px 0;
+    }
+
     .blog {
       background: rgba(255,255,255,0.95);
       color: #000;
       padding: 15px;
-      margin-top: 15px;
+      margin-top: 20px;
       border-radius: 10px;
+      max-width: 600px;
+    }
+
+    @media (max-width: 600px) {
+      .login-box, .register-panel, .blog {
+        max-width: 100%;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Giriş / Kayıt</h2>
-    <div class="highlights">💖 Ücretsiz kaydol</div>
-    <div class="highlights">👫 Yakınındakilerle eşleş</div>
-    <div class="highlights">📞 Görüntülü tanışma imkanı</div>
 
-    <input type="text" placeholder="Kullanıcı Adı" />
-    <input type="email" placeholder="E-posta" />
-    <input type="password" placeholder="Şifre" />
-    <input type="password" placeholder="Şifre Tekrar" />
-    <input type="number" placeholder="Yaş" />
-    <select>
-      <option disabled selected>Cinsiyet</option>
-      <option>Kadın</option>
-      <option>Erkek</option>
-    </select>
-    <select>
-      <option disabled selected>Aradığı Cinsiyet</option>
-      <option>Kadın</option>
-      <option>Erkek</option>
-    </select>
-    <input type="text" placeholder="Şehir" />
-    <button>Kayıt Ol</button>
-    <button>Giriş Yap</button>
-    <button>Google ile Giriş</button>
-    <button>Şifremi Unuttum</button>
+  <div class="login-box">
+    <h2>Giriş Yap</h2>
+    <input type="email" placeholder="E-posta">
+    <input type="password" placeholder="Şifre">
+    <button class="btn-primary">Giriş Yap</button>
+    <button class="btn-secondary" id="showRegister">Ücretsiz Kaydol</button>
+    <button class="btn-secondary">Şifremi Unuttum</button>
+    <button class="btn-secondary">Google ile Giriş Yap</button>
+  </div>
 
-    <div class="gallery" id="gallery">
-      <img src="/images/1.jpg" class="visible" />
-      <img src="/images/2.jpg" />
-      <img src="/images/3.jpg" />
-      <img src="/images/4.jpg" />
-      <img src="/images/5.jpg" />
+  <div class="register-panel" id="registerPanel">
+    <h3>Kayıt Ol</h3>
+    <input type="text" placeholder="Kullanıcı Adı (Nickname)">
+    <input type="email" placeholder="E-posta">
+    <input type="password" placeholder="Şifre">
+    <input type="password" placeholder="Şifre Tekrar">
+    <input type="number" placeholder="Yaş">
+    <div class="gender-options">
+      <button class="gender-female">Kadın</button>
+      <button class="gender-male">Erkek</button>
     </div>
-
-    <div class="kvkk">
-      KVKK kapsamında kişisel verileriniz gizli tutulur. Sahte profiller ve taciz davranışları sistem tarafından engellenmektedir.
+    <div class="gender-options">
+      <button class="gender-female">Kadın Arıyor</button>
+      <button class="gender-male">Erkek Arıyor</button>
     </div>
+    <input type="text" placeholder="Şehir">
+    <button class="btn-primary">Kaydı Tamamla</button>
 
-    <div class="blog">
-      <h3>1990'dan Bugüne Mutluluğunuz İçin</h3>
-      <p>30 yılı aşkın süredir binlerce çiftin yollarını birleştirdik. Evlilik Yolu, sadece tanışma değil; güvenli, saygılı ve ciddi birliktelikler için kurulmuş bir platformdur.</p>
-    </div>
-
-    <div class="blog">
-      <h3>Neden Evlilik Yolu?</h3>
-      <p>Çünkü biz, hızlı tüketilen ilişkiler yerine kalıcı değerler sunuyoruz. Gerçek kimlik doğrulama, görüntülü görüşme ve karşılıklı beklentilere göre eşleşme sistemiyle farklıyız.</p>
-    </div>
-
-    <div class="blog">
-      <h3>Verileriniz Güvende</h3>
-      <p>Kişisel verileriniz KVKK’ya uygun olarak saklanır. Hiçbir bilginiz üçüncü kişilerle paylaşılmaz. Sistem, güvenlik açıklarına karşı sürekli güncellenmektedir.</p>
+    <div class="info-icons">
+      <div>💖 Ücretsiz kaydol</div>
+      <div>👫 Yakınındakilerle eşleş</div>
+      <div>📞 Görüntülü tanışma imkanı</div>
     </div>
   </div>
 
+  <div class="blog">
+    <h3>💍 2000 yılından bugüne binlerce çiftin evliliğine aracılık ettik</h3>
+    <p>Platformumuzda ciddi ve güvenilir ilişkiler kurmak isteyen binlerce kişiyle buluşabilirsiniz. Evlilik Yolu, kullanıcı gizliliğine saygılı, dolandırıcılığa karşı korumalı ve her zaman destek sunan yapısıyla fark yaratır.</p>
+  </div>
+
+  <div class="blog">
+    <h3>📌 Güvenlik ve KVKK</h3>
+    <p>Kişisel verileriniz KVKK kapsamında korunur. Hiçbir bilginiz izinsiz paylaşılmaz. Şikayet sistemiyle sahte profiller anında engellenir. İlk amacımız; gerçek ve güvenli buluşmalar.</p>
+  </div>
+
+  <div class="blog">
+    <h3>🎯 Mobil Uyumlu Gerçek Zamanlı Deneyim</h3>
+    <p>Sitemiz tüm cihazlarla uyumludur. Telefon, tablet veya bilgisayar fark etmeksizin kolayca giriş yapabilir ve eşleşmelere başlayabilirsiniz. İlk giriş sonrası profil resmi ya da avatar seçimi zorunludur.</p>
+  </div>
+
   <script>
-    const galleryImages = document.querySelectorAll("#gallery img");
-    let currentIndex = 0;
-
-    function showNextImage() {
-      galleryImages.forEach((img, index) => {
-        img.classList.remove("visible");
-      });
-      galleryImages[currentIndex].classList.add("visible");
-      currentIndex = (currentIndex + 1) % galleryImages.length;
-    }
-
-    setInterval(showNextImage, 10000);
+    document.getElementById("showRegister").addEventListener("click", function() {
+      document.getElementById("registerPanel").style.display = "block";
+      window.scrollTo({ top: document.getElementById("registerPanel").offsetTop, behavior: "smooth" });
+    });
   </script>
+
 </body>
 </html>
