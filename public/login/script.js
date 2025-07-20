@@ -89,7 +89,7 @@ submitRegisterBtn.addEventListener("click", async () => {
     });
 
     await sendEmailVerification(user);
-    alert("Kayıt başarılı. Lütfen e-posta adresinizi doğrulayın.");
+    alert("Kayıt başarılı. Lütfen e-posta adresinizi doğrulamak için mail kutunuzu kontrol edin.");
     await signOut(auth);
   } catch (error) {
     alert("Kayıt başarısız: " + error.message);
