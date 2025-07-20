@@ -38,7 +38,7 @@
       margin-bottom: 20px;
     }
 
-    input {
+    input[type="text"], input[type="email"], input[type="password"], input[type="number"] {
       width: 100%;
       padding: 10px;
       margin: 8px 0;
@@ -78,27 +78,26 @@
       color: #000;
     }
 
-    .gender-options {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
+    .gender-section {
+      margin: 10px 0;
+      text-align: left;
     }
 
-    .gender-options button {
-      flex: 1;
-      padding: 10px;
-      border-radius: 8px;
-      font-weight: bold;
+    .gender-section label {
+      display: inline-block;
+      margin-right: 10px;
     }
 
-    .gender-male {
-      background-color: #add8e6;
-      color: #000;
+    .pink-label {
+      background: #ffb6c1;
+      padding: 5px 10px;
+      border-radius: 6px;
     }
 
-    .gender-female {
-      background-color: #ffb6c1;
-      color: #000;
+    .blue-label {
+      background: #add8e6;
+      padding: 5px 10px;
+      border-radius: 6px;
     }
 
     .info-icons {
@@ -111,7 +110,12 @@
       margin: 5px 0;
     }
 
-    $1color: navy;
+    .blog {
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 10px;
+      max-width: 600px;
+      color: navy;
       background-color: transparent;
     }
 
@@ -140,17 +144,22 @@
     <input type="email" placeholder="E-posta">
     <input type="password" placeholder="Şifre">
     <input type="password" placeholder="Şifre Tekrar">
-    <input type="number" placeholder="Yaş">
-    <div class="gender-options">
-      <button class="gender-female">Kadın</button>
-      <button class="gender-male">Erkek</button>
+    <input type="number" id="ageInput" placeholder="Yaş">
+
+    <div class="gender-section">
+      <p>Cinsiyetiniz:</p>
+      <label class="pink-label"><input type="radio" name="gender" value="Kadın"> Kadın</label>
+      <label class="blue-label"><input type="radio" name="gender" value="Erkek"> Erkek</label>
     </div>
-    <div class="gender-options">
-      <button class="gender-female">Kadın Arıyor</button>
-      <button class="gender-male">Erkek Arıyor</button>
+
+    <div class="gender-section">
+      <p>Ne arıyorsunuz?</p>
+      <label class="pink-label"><input type="radio" name="lookingFor" value="Kadın"> Kadın</label>
+      <label class="blue-label"><input type="radio" name="lookingFor" value="Erkek"> Erkek</label>
     </div>
+
     <input type="text" placeholder="Şehir">
-    <button class="btn-primary">Kaydı Tamamla</button>
+    <button class="btn-primary" id="submitRegister">Kaydı Tamamla</button>
 
     <div class="info-icons">
       <div>💖 Ücretsiz kaydol</div>
@@ -178,6 +187,15 @@
     document.getElementById("showRegister").addEventListener("click", function() {
       document.getElementById("registerPanel").style.display = "block";
       window.scrollTo({ top: document.getElementById("registerPanel").offsetTop, behavior: "smooth" });
+    });
+
+    document.getElementById("submitRegister").addEventListener("click", function() {
+      const age = parseInt(document.getElementById("ageInput").value);
+      if (isNaN(age) || age < 18) {
+        alert("18 yaşından küçükler kayıt olamaz.");
+        return;
+      }
+      alert("Kayıt bilgileri alındı. Firebase bağlantısı zaten script.js içinde");
     });
   </script>
 
