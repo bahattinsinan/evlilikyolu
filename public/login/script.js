@@ -23,6 +23,7 @@ const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
 document.addEventListener("DOMContentLoaded", () => {
+  const loginBtn = document.getElementById("loginBtn");
   // Kayıt panelini aç
   document.getElementById("showRegister")?.addEventListener("click", () => {
     document.getElementById("registerPanel").style.display = "block";
@@ -47,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const email = document.getElementById("registerEmail").value;
     const password = document.getElementById("registerPassword").value;
     const confirmPassword = document.getElementById("confirmPassword").value;
-    const age = document.getElementById("age").value;
+    const age = document.getElementById("ageInput").value;
     const gender = document.querySelector('input[name="gender"]:checked')?.value;
     const lookingFor = document.querySelector('input[name="lookingFor"]:checked')?.value;
     const city = document.getElementById("city").value;
