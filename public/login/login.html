@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Evlilik Yolu - Giriş & Kayıt</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: url('/images/login1.png') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+    }
+    .container {
+      background-color: rgba(0, 0, 0, 0.6);
+      max-width: 500px;
+      margin: 50px auto;
+      padding: 20px;
+      border-radius: 12px;
+    }
+    input, select, button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      font-size: 16px;
+    }
+    .highlights {
+      background-color: #ffc0cb;
+      color: #000;
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    .gallery {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .gallery img {
+      display: none;
+      width: 100%;
+      max-width: 500px;
+      border-radius: 10px;
+    }
+    .gallery img.visible {
+      display: block;
+    }
+    .kvkk {
+      font-size: 12px;
+      background: rgba(255,255,255,0.9);
+      color: #000;
+      padding: 10px;
+      margin-top: 20px;
+      border-radius: 8px;
+    }
+    .blog {
+      background: rgba(255,255,255,0.95);
+      color: #000;
+      padding: 15px;
+      margin-top: 15px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Giriş / Kayıt</h2>
+    <div class="highlights">💖 Ücretsiz kaydol</div>
+    <div class="highlights">👫 Yakınındakilerle eşleş</div>
+    <div class="highlights">📞 Görüntülü tanışma imkanı</div>
+
+    <input type="text" placeholder="Kullanıcı Adı" />
+    <input type="email" placeholder="E-posta" />
+    <input type="password" placeholder="Şifre" />
+    <input type="password" placeholder="Şifre Tekrar" />
+    <input type="number" placeholder="Yaş" />
+    <select>
+      <option disabled selected>Cinsiyet</option>
+      <option>Kadın</option>
+      <option>Erkek</option>
+    </select>
+    <select>
+      <option disabled selected>Aradığı Cinsiyet</option>
+      <option>Kadın</option>
+      <option>Erkek</option>
+    </select>
+    <input type="text" placeholder="Şehir" />
+    <button>Kayıt Ol</button>
+    <button>Giriş Yap</button>
+    <button>Google ile Giriş</button>
+    <button>Şifremi Unuttum</button>
+
+    <div class="gallery" id="gallery">
+      <img src="/images/1.jpg" class="visible" />
+      <img src="/images/2.jpg" />
+      <img src="/images/3.jpg" />
+      <img src="/images/4.jpg" />
+      <img src="/images/5.jpg" />
+    </div>
+
+    <div class="kvkk">
+      KVKK kapsamında kişisel verileriniz gizli tutulur. Sahte profiller ve taciz davranışları sistem tarafından engellenmektedir.
+    </div>
+
+    <div class="blog">
+      <h3>1990'dan Bugüne Mutluluğunuz İçin</h3>
+      <p>30 yılı aşkın süredir binlerce çiftin yollarını birleştirdik. Evlilik Yolu, sadece tanışma değil; güvenli, saygılı ve ciddi birliktelikler için kurulmuş bir platformdur.</p>
+    </div>
+
+    <div class="blog">
+      <h3>Neden Evlilik Yolu?</h3>
+      <p>Çünkü biz, hızlı tüketilen ilişkiler yerine kalıcı değerler sunuyoruz. Gerçek kimlik doğrulama, görüntülü görüşme ve karşılıklı beklentilere göre eşleşme sistemiyle farklıyız.</p>
+    </div>
+
+    <div class="blog">
+      <h3>Verileriniz Güvende</h3>
+      <p>Kişisel verileriniz KVKK’ya uygun olarak saklanır. Hiçbir bilginiz üçüncü kişilerle paylaşılmaz. Sistem, güvenlik açıklarına karşı sürekli güncellenmektedir.</p>
+    </div>
+  </div>
+
+  <script>
+    const galleryImages = document.querySelectorAll("#gallery img");
+    let currentIndex = 0;
+
+    function showNextImage() {
+      galleryImages.forEach((img, index) => {
+        img.classList.remove("visible");
+      });
+      galleryImages[currentIndex].classList.add("visible");
+      currentIndex = (currentIndex + 1) % galleryImages.length;
+    }
+
+    setInterval(showNextImage, 10000);
+  </script>
+</body>
+</html>
