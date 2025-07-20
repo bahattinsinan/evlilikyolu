@@ -101,7 +101,7 @@ submitRegisterBtn.addEventListener("click", async () => {
     });
 
     await sendEmailVerification(user);
-    alert("✅ Kayıt başarılı! E-posta adresinizi doğrulamak için gelen bağlantıya tıklayın.");
+    alert("✅ Kayıt başarılı! E-posta adresinize doğrulama bağlantısı gönderildi.\n\n📩 Lütfen gelen kutunuzu ve spam klasörünü kontrol edin.");
     await signOut(auth);
   } catch (error) {
     alert("🚫 Kayıt başarısız: " + error.message);
