@@ -184,6 +184,16 @@
   </div>
 
   <script type="module" src="/login/script.js"></script>
+  <script>
+    document.getElementById("showRegister").addEventListener("click", () => {
+      document.querySelector(".login-box").style.display = "none";
+      document.querySelector(".register-panel").style.display = "block";
+    });
+
+    document.getElementById("submitRegister").addEventListener("click", () => {
+      alert("Kayıt bilgileri alındı. Firebase bağlantısı zaten script.js içinde.");
+    });
+  </script>
 
 </body>
 </html>
