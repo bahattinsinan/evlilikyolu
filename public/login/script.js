@@ -1,60 +1,73 @@
+// public/login/script.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getAuth,
-  createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   sendEmailVerification,
-  signOut,
   onAuthStateChanged,
   GoogleAuthProvider,
-  signInWithPopup
+  signInWithPopup,
+  signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   getFirestore,
   doc,
   setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBXDPSHzYwDKJMKflRPaC-egd-r6dLzL6U",
-  authDomain: "evlilikyolutr.firebaseapp.com",
-  projectId: "evlilikyolutr",
-  storageBucket: "evlilikyolutr.firebasestorage.app",
-  messagingSenderId: "299542496680",
-  appId: "1:299542496680:web:79967f42f243b64c4dc99d",
-  measurementId: "G-RVZYMG4T3M"
-};
+import { firebaseConfig } from "/firebaseConfig.js";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
 
-// PANEL GEÇİŞİ
-document.getElementById("showRegister").addEventListener("click", () => {
-  document.getElementById("registerPanel").style.display = "block";
+const loginBtn = document.getElementById("loginBtn");
+const showRegisterBtn = document.getElementById("showRegister");
+const registerPanel = document.getElementById("registerPanel");
+const submitRegisterBtn = document.getElementById("submitRegister");
+const googleLoginBtn = document.getElementById("googleLogin");
+
+// Giriş yapma işlemi
+loginBtn.addEventListener("click", async () => {
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
+
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    if (!user.emailVerified) {
+      alert("Lütfen e-posta adresinizi doğrulayın. Mail kutunuzu ve spam klasörünü kontrol edin.");
+      await sendEmailVerification(user);
+      await signOut(auth);
+    } else {
+      window.location.href = "/home/home.html";
+    }
+  } catch (error) {
+    alert("Giriş başarısız: " + error.message);
+  }
 });
 
-// KAYIT
-document.getElementById("submitRegister").addEventListener("click", async () => {
-  const nickname = document.getElementById("nickname").value.trim();
-  const email = document.getElementById("registerEmail").value.trim();
+// Kayıt panelini göster
+showRegisterBtn.addEventListener("click", () => {
+  registerPanel.style.display = "block";
+});
+
+// Kayıt işlemi
+submitRegisterBtn.addEventListener("click", async () => {
+  const nickname = document.getElementById("nickname").value;
+  const email = document.getElementById("registerEmail").value;
   const password = document.getElementById("registerPassword").value;
   const passwordRepeat = document.getElementById("registerPasswordRepeat").value;
-  const age = parseInt(document.getElementById("ageInput").value);
+  const age = document.getElementById("ageInput").value;
+  const city = document.getElementById("city").value;
   const gender = document.querySelector('input[name="gender"]:checked')?.value;
   const lookingFor = document.querySelector('input[name="lookingFor"]:checked')?.value;
-  const city = document.getElementById("city").value.trim();
-
-  if (!nickname || !email || !password || !passwordRepeat || !gender || !lookingFor || !city || !age) {
-    return alert("Tüm alanları eksiksiz doldurmalısınız.");
-  }
 
   if (password !== passwordRepeat) {
-    return alert("Şifreler eşleşmiyor.");
-  }
-
-  if (age < 18) {
-    return alert("18 yaşından küçükler kayıt olamaz.");
+    alert("Şifreler eşleşmiyor!");
+    return;
   }
 
   try {
@@ -62,69 +75,63 @@ document.getElementById("submitRegister").addEventListener("click", async () => 
     const user = userCredential.user;
 
     await setDoc(doc(db, "users", user.uid), {
-      uid: user.uid,
       displayName: nickname,
-      email: email,
-      age: age,
-      gender: gender,
-      lookingFor: lookingFor,
-      city: city,
-      bio: "",
-      profileImage: "/images/default-avatar.png",
+      email,
+      age,
+      city,
+      gender,
+      lookingFor,
+      uid: user.uid,
       membership: "Standart Üye",
+      profileImage: "",
+      bio: "",
       tokens: 0
     });
 
     await sendEmailVerification(user);
-    alert("Kayıt başarılı. Lütfen e-posta adresinize gelen doğrulama bağlantısını tıklayın.");
-    signOut(auth);
+    alert("Kayıt başarılı. Lütfen e-posta adresinizi doğrulayın.");
+    await signOut(auth);
   } catch (error) {
-    alert("Hata: " + error.message);
+    alert("Kayıt başarısız: " + error.message);
   }
 });
 
-// GİRİŞ
-document.getElementById("loginBtn").addEventListener("click", async () => {
-  const email = document.getElementById("loginEmail").value.trim();
-  const password = document.getElementById("loginPassword").value;
-
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    if (!userCredential.user.emailVerified) {
-      alert("Lütfen e-posta adresinizi doğrulayın.");
-      signOut(auth);
-      return;
-    }
-    window.location.href = "/home/home.html";
-  } catch (error) {
-    alert("Giriş başarısız: " + error.message);
-  }
-});
-
-// GOOGLE İLE GİRİŞ
-document.getElementById("googleLogin").addEventListener("click", async () => {
-  const provider = new GoogleAuthProvider();
+// Google ile giriş
+googleLoginBtn.addEventListener("click", async () => {
   try {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
 
+    if (!user.emailVerified) {
+      alert("Google hesabınız doğrulanmamış. Lütfen e-posta adresinizi doğrulayın.");
+      await signOut(auth);
+      return;
+    }
+
     const userRef = doc(db, "users", user.uid);
     await setDoc(userRef, {
-      uid: user.uid,
       displayName: user.displayName || "Bilinmeyen",
       email: user.email,
+      uid: user.uid,
       age: "",
+      city: "",
       gender: "",
       lookingFor: "",
-      city: "",
-      bio: "",
-      profileImage: "/images/default-avatar.png",
       membership: "Standart Üye",
+      profileImage: user.photoURL || "",
+      bio: "",
       tokens: 0
     }, { merge: true });
 
     window.location.href = "/home/home.html";
   } catch (error) {
     alert("Google ile giriş başarısız: " + error.message);
+  }
+});
+
+// Giriş yapan kullanıcı doğrulanmışsa ana sayfaya yönlendir
+onAuthStateChanged(auth, (user) => {
+  if (user && user.emailVerified) {
+    window.location.href = "/home/home.html";
   }
 });
