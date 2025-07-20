@@ -144,6 +144,10 @@ googleLoginBtn.addEventListener("click", async () => {
       return;
     }
 
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+const user = userCredential.user;
+await user.reload();
+
     if (!user.emailVerified) {
       alert("📩 Lütfen e-posta adresinizi doğrulayın. Gelen kutunuzu ve spam klasörünü kontrol edin.");
       await sendEmailVerification(user, {
