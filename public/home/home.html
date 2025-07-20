@@ -14,43 +14,39 @@
     }
 
     header {
-  position: relative;
-  background: rgba(255, 105, 180, 0.6); /* daha pembe */
-  padding: 25px;
-  text-align: center;
-  font-size: 32px;
-  font-weight: bold;
-  letter-spacing: 1px;
-  }
+      position: relative;
+      background: rgba(255, 105, 180, 0.6);
+      padding: 25px;
+      text-align: center;
+      font-size: 32px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
 
-  .heart {
-  position: absolute;
-  top: 15px;
-  font-size: 38px;
-  animation: spin 3s linear infinite, colorchange 5s infinite;
-  }
+    .heart {
+      position: absolute;
+      top: 15px;
+      font-size: 38px;
+      animation: spin 3s linear infinite, colorchange 5s infinite;
+    }
 
- .heart.left {
-  left: 20px;
-  }
+    .heart.left {
+      left: 20px;
+    }
 
-  .heart.right {
-  right: 20px;
-  }
+    .heart.right {
+      right: 20px;
+    }
 
     @keyframes spin {
-  from { transform: rotateY(0deg); }
-  to { transform: rotateY(360deg); }
-}
+      from { transform: rotateY(0deg); }
+      to { transform: rotateY(360deg); }
+    }
 
-.heart {
-  position: absolute;
-  top: 15px;
-  font-size: 38px;
-  animation: spin 4s linear infinite, colorchange 5s infinite;
-  transform-style: preserve-3d;
-  transform-origin: center;
-}
+    .heart {
+      transform-style: preserve-3d;
+      transform-origin: center;
+    }
 
     @keyframes colorchange {
       0% { color: pink; }
@@ -61,33 +57,34 @@
     }
 
     .online-users {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  padding: 20px;
-  gap: 20px;
-}
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 20px;
+      gap: 20px;
+    }
 
-.user-card {
-  background: rgba(255, 255, 255, 0.92);
-  color: #000;
-  border-radius: 15px;
-  padding: 12px;
-  width: 160px;
-  text-align: center;
-  box-shadow: 0 0 5px rgba(0,0,0,0.2);
-}
+    .user-card {
+      background: rgba(255, 255, 255, 0.92);
+      color: #000;
+      border-radius: 15px;
+      padding: 12px;
+      width: 160px;
+      text-align: center;
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+      box-sizing: border-box;
+    }
 
-.user-card img {
-  width: 100px;
-  height: 100px;
-  aspect-ratio: 1 / 1;
-  border-radius: 50%;
-  object-fit: cover;
-  display: block;
-  border: 2px solid hotpink;
-  margin: 0 auto 5px;
-}
+    .user-card img {
+      width: 100px;
+      height: 100px;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      border: 2px solid hotpink;
+      margin: 0 auto 5px;
+    }
 
     .bottom-menu {
       position: fixed;
@@ -119,7 +116,6 @@
       cursor: pointer;
     }
 
-    /* Yardım Paneli */
     .help-button {
       position: fixed;
       bottom: 80px;
@@ -183,7 +179,7 @@
 
     @media (max-width: 600px) {
       .user-card {
-        width: 45%;
+        width: 48%;
       }
 
       .help-panel {
@@ -306,11 +302,10 @@
       }
     }
 
-     window.logout = logout;
+    window.logout = logout;
     window.goTo = goTo;
     window.toggleHelp = toggleHelp;
     window.sendHelpMessage = sendHelpMessage;
-    
   </script>
 </body>
 </html>
