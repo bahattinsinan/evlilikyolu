@@ -119,8 +119,21 @@
       background-color: transparent;
     }
 
+    .slideshow {
+      max-width: 400px;
+      margin: 20px auto 0;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .slideshow img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+    }
+
     @media (max-width: 600px) {
-      .login-box, .register-panel, .blog {
+      .login-box, .register-panel, .blog, .slideshow {
         max-width: 100%;
       }
     }
@@ -134,7 +147,7 @@
     <input type="password" id="loginPassword" placeholder="Şifre">
     <button class="btn-primary" id="loginBtn">Giriş Yap</button>
     <button class="btn-secondary" id="showRegister">Ücretsiz Kaydol</button>
-    <button class="btn-secondary">Şifremi Unuttum</button>
+    <button class="btn-secondary" id="forgotPassword">Şifremi Unuttum</button>
     <button class="btn-secondary" id="googleLogin">Google ile Giriş Yap</button>
   </div>
 
@@ -168,6 +181,10 @@
     </div>
   </div>
 
+  <div class="slideshow">
+    <img id="slideshowImage" src="/images/1.jpg" alt="slayt">
+  </div>
+
   <div class="blog">
     <h3>💍 2000 yılından bugüne binlerce çiftin evliliğine aracılık ettik</h3>
     <p>Platformumuzda ciddi ve güvenilir ilişkiler kurmak isteyen binlerce kişiyle buluşabilirsiniz. Evlilik Yolu, kullanıcı gizliliğine saygılı, dolandırıcılığa karşı korumalı ve her zaman destek sunan yapısıyla fark yaratır.</p>
@@ -194,6 +211,20 @@
           registerPanel.style.display = "block";
         });
       }
+
+      // Slayt geçişi
+      const slideshowImages = [
+        "/images/1.jpg",
+        "/images/2.jpg",
+        "/images/3.jpg",
+        "/images/4.jpg",
+        "/images/5.jpg"
+      ];
+      let currentSlide = 0;
+      setInterval(() => {
+        currentSlide = (currentSlide + 1) % slideshowImages.length;
+        document.getElementById("slideshowImage").src = slideshowImages[currentSlide];
+      }, 10000);
     });
   </script>
 </body>
