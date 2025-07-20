@@ -134,9 +134,25 @@ googleLoginBtn.addEventListener("click", async () => {
         bio: "",
         tokens: 0
       });
+
+      await sendEmailVerification(user, {
+        url: "https://evlilikyolutr.netlify.app/login/verify-success.html"
+      });
+
+      alert("📩 İlk kez Google ile giriş yaptınız. E-posta adresinize doğrulama bağlantısı gönderildi.\nLütfen doğruladıktan sonra tekrar giriş yapınız.");
+      await signOut(auth);
+      return;
     }
 
-    // Google hesabı zaten verified kabul edilir
+    if (!user.emailVerified) {
+      alert("📩 Lütfen e-posta adresinizi doğrulayın. Gelen kutunuzu ve spam klasörünü kontrol edin.");
+      await sendEmailVerification(user, {
+        url: "https://evlilikyolutr.netlify.app/login/verify-success.html"
+      });
+      await signOut(auth);
+      return;
+    }
+
     window.location.href = "/home/home.html";
   } catch (error) {
     alert("❌ Google ile giriş başarısız: " + error.message);
