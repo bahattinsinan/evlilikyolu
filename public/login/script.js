@@ -40,11 +40,15 @@ loginBtn.addEventListener("click", async () => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    await user.reload(); // Doğrulama durumu güncel olsun
+    // 🔄 Zorla veriyi güncelle
+    await user.reload();
 
-    if (!user.emailVerified) {
-      alert("📩 Lütfen e-posta adresinizi doğrulayın. Mail kutunuzu ve spam klasörünü kontrol edin.");
-      await sendEmailVerification(user, {
+    // ✅ Güncellenmiş veriyi tekrar çek
+    const refreshedUser = auth.currentUser;
+
+    if (!refreshedUser.emailVerified) {
+      alert("📩 Lütfen e-posta adresinizi doğrulayın. Gelen kutunuzu ve spam klasörünü kontrol edin.");
+      await sendEmailVerification(refreshedUser, {
         url: "https://evlilikyolutr.netlify.app/login/verify-success.html"
       });
       await signOut(auth);
