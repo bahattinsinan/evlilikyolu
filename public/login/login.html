@@ -130,6 +130,8 @@
       width: 100%;
       height: auto;
       border-radius: 10px;
+      opacity: 0;
+      transition: opacity 1s;
     }
 
     @media (max-width: 600px) {
@@ -182,7 +184,7 @@
   </div>
 
   <div class="slideshow">
-    <img id="slideshowImage" src="/images/1.jpg" alt="slayt">
+    <img id="slideshowImage" src="/images/1.png" alt="slayt">
   </div>
 
   <div class="blog">
@@ -202,7 +204,6 @@
 
   <script type="module" src="/login/script.js"></script>
   <script>
-    // Kayıt panelini aç
     document.addEventListener("DOMContentLoaded", () => {
       const showRegisterBtn = document.getElementById("showRegister");
       const registerPanel = document.getElementById("registerPanel");
@@ -212,18 +213,27 @@
         });
       }
 
-      // Slayt geçişi
       const slideshowImages = [
-        "/images/1.png"
-        "/images/2.png"
-        "/images/3.png"
-        "/images/4.png"
+        "/images/1.png",
+        "/images/2.png",
+        "/images/3.png",
+        "/images/4.png",
         "/images/5.png"
       ];
       let currentSlide = 0;
+      const slideshowImage = document.getElementById("slideshowImage");
+
+      // İlk resmi yükle ve görünür yap
+      slideshowImage.src = slideshowImages[currentSlide];
+      slideshowImage.style.opacity = 1;
+
       setInterval(() => {
-        currentSlide = (currentSlide + 1) % slideshowImages.length;
-        document.getElementById("slideshowImage").src = slideshowImages[currentSlide];
+        slideshowImage.style.opacity = 0;
+        setTimeout(() => {
+          currentSlide = (currentSlide + 1) % slideshowImages.length;
+          slideshowImage.src = slideshowImages[currentSlide];
+          slideshowImage.style.opacity = 1;
+        }, 500);
       }, 10000);
     });
   </script>
