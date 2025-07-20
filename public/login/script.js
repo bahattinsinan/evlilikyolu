@@ -165,4 +165,17 @@ forgotPasswordBtn.addEventListener("click", async () => {
   }
 });
 
+// Google login veya mail verified kullanıcıyı yönlendir
+onAuthStateChanged(auth, (user) => {
+  if (!user) return;
+
+  const isGoogleUser = user.providerData.some(
+    (provider) => provider.providerId === "google.com"
+  );
+
+  if (user.emailVerified || isGoogleUser) {
+    window.location.href = "/home/home.html";
+  }
+});
+
 //
