@@ -204,38 +204,47 @@
 
   <script type="module" src="/login/script.js"></script>
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const showRegisterBtn = document.getElementById("showRegister");
-      const registerPanel = document.getElementById("registerPanel");
-      if (showRegisterBtn && registerPanel) {
-        showRegisterBtn.addEventListener("click", () => {
-          registerPanel.style.display = "block";
-        });
-      }
+  document.addEventListener("DOMContentLoaded", () => {
+    const showRegisterBtn = document.getElementById("showRegister");
+    const registerPanel = document.getElementById("registerPanel");
+    if (showRegisterBtn && registerPanel) {
+      showRegisterBtn.addEventListener("click", () => {
+        registerPanel.style.display = "block";
+      });
+    }
 
-      const slideshowImages = [
-        "/images/1.png",
-        "/images/2.png",
-        "/images/3.png",
-        "/images/4.png",
-        "/images/5.png"
-      ];
-      let currentSlide = 0;
-      const slideshowImage = document.getElementById("slideshowImage");
+    const slideshowImages = [
+      "/images/1.png",
+      "/images/2.png",
+      "/images/3.png",
+      "/images/4.png",
+      "/images/5.png"
+    ];
+    let currentSlide = 0;
+    const slideshowImage = document.getElementById("slideshowImage");
 
-      // İlk resmi yükle ve görünür yap
+    function showNextImage() {
+      slideshowImage.style.opacity = 0;
+
+      // Yeni görsel yüklendiğinde görünür yap
+      slideshowImage.onload = () => {
+        slideshowImage.style.opacity = 1;
+      };
+
+      // Yeni kaynağı ata (yeni resim)
+      currentSlide = (currentSlide + 1) % slideshowImages.length;
       slideshowImage.src = slideshowImages[currentSlide];
-      slideshowImage.style.opacity = 1;
+    }
 
-      setInterval(() => {
-        slideshowImage.style.opacity = 0;
-        setTimeout(() => {
-          currentSlide = (currentSlide + 1) % slideshowImages.length;
-          slideshowImage.src = slideshowImages[currentSlide];
-          slideshowImage.style.opacity = 1;
-        }, 500);
-      }, 10000);
-    });
-  </script>
+    // Başlangıç resmi
+    slideshowImage.src = slideshowImages[currentSlide];
+    slideshowImage.onload = () => {
+      slideshowImage.style.opacity = 1;
+    };
+
+    // Her 10 saniyede geçiş yap
+    setInterval(showNextImage, 10000);
+  });
+</script>
 </body>
 </html>
