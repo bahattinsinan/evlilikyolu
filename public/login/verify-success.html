@@ -33,8 +33,27 @@
 <body>
   <div class="box">
     <h2>✅ E-posta adresiniz başarıyla doğrulandı!</h2>
-    <p>Artık hesabınızı güvenle kullanabilirsiniz.</p>
-    <a href="/login/login.html">Giriş Sayfasına Git</a>
+    <p>3 saniye içinde giriş sayfasına yönlendirileceksiniz...</p>
+    <a href="/login/login.html">Manuel Git</a>
   </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { firebaseConfig } from "/firebaseConfig.js";
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        await signOut(auth);
+      }
+    });
+
+    setTimeout(() => {
+      window.location.href = "/login/login.html";
+    }, 3000);
+  </script>
 </body>
 </html>
