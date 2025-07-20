@@ -182,7 +182,13 @@
     <h3>🎯 Mobil Uyumlu Gerçek Zamanlı Deneyim</h3>
     <p>Sitemiz tüm cihazlarla uyumludur. Telefon, tablet veya bilgisayar fark etmeksizin kolayca giriş yapabilir ve eşleşmelere başlayabilirsiniz. İlk giriş sonrası profil resmi ya da avatar seçimi zorunludur.</p>
   </div>
- 
-<script type="module" src="/login/script.js"></script>
+
+  <script type="module" src="/login/script.js"></script>
+  <script>
+    // Sadece Kaydol panelini aç
+    document.getElementById("showRegister").addEventListener("click", () => {
+      document.getElementById("registerPanel").style.display = "block";
+    });
+  </script>
 </body>
 </html>
