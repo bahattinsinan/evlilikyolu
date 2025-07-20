@@ -130,20 +130,20 @@
 
   <div class="login-box">
     <h2>Giriş Yap</h2>
-    <input type="email" placeholder="E-posta">
-    <input type="password" placeholder="Şifre">
-    <button class="btn-primary">Giriş Yap</button>
+    <input type="email" id="loginEmail" placeholder="E-posta">
+    <input type="password" id="loginPassword" placeholder="Şifre">
+    <button class="btn-primary" id="loginBtn">Giriş Yap</button>
     <button class="btn-secondary" id="showRegister">Ücretsiz Kaydol</button>
     <button class="btn-secondary">Şifremi Unuttum</button>
-    <button class="btn-secondary">Google ile Giriş Yap</button>
+    <button class="btn-secondary" id="googleLogin">Google ile Giriş Yap</button>
   </div>
 
   <div class="register-panel" id="registerPanel">
     <h3>Kayıt Ol</h3>
-    <input type="text" placeholder="Kullanıcı Adı (Nickname)">
-    <input type="email" placeholder="E-posta">
-    <input type="password" placeholder="Şifre">
-    <input type="password" placeholder="Şifre Tekrar">
+    <input type="text" id="nickname" placeholder="Kullanıcı Adı (Nickname)">
+    <input type="email" id="registerEmail" placeholder="E-posta">
+    <input type="password" id="registerPassword" placeholder="Şifre">
+    <input type="password" id="registerPasswordRepeat" placeholder="Şifre Tekrar">
     <input type="number" id="ageInput" placeholder="Yaş">
 
     <div class="gender-section">
@@ -158,7 +158,7 @@
       <label class="blue-label"><input type="radio" name="lookingFor" value="Erkek"> Erkek</label>
     </div>
 
-    <input type="text" placeholder="Şehir">
+    <input type="text" id="city" placeholder="Şehir">
     <button class="btn-primary" id="submitRegister">Kaydı Tamamla</button>
 
     <div class="info-icons">
@@ -183,21 +183,7 @@
     <p>Sitemiz tüm cihazlarla uyumludur. Telefon, tablet veya bilgisayar fark etmeksizin kolayca giriş yapabilir ve eşleşmelere başlayabilirsiniz. İlk giriş sonrası profil resmi ya da avatar seçimi zorunludur.</p>
   </div>
 
-  <script>
-    document.getElementById("showRegister").addEventListener("click", function() {
-      document.getElementById("registerPanel").style.display = "block";
-      window.scrollTo({ top: document.getElementById("registerPanel").offsetTop, behavior: "smooth" });
-    });
-
-    document.getElementById("submitRegister").addEventListener("click", function() {
-      const age = parseInt(document.getElementById("ageInput").value);
-      if (isNaN(age) || age < 18) {
-        alert("18 yaşından küçükler kayıt olamaz.");
-        return;
-      }
-      alert("Kayıt bilgileri alındı. Firebase bağlantısı zaten script.js içinde");
-    });
-  </script>
+  <script type="module" src="/login/script.js"></script>
 
 </body>
 </html>
