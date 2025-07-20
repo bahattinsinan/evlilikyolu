@@ -33,29 +33,32 @@ document.addEventListener("DOMContentLoaded", () => {
   const forgotPasswordBtn = document.getElementById("forgotPassword");
 
   // Giriş yapma
-  loginBtn?.addEventListener("click", async () => {
-    const email = document.getElementById("loginEmail").value;
-    const password = document.getElementById("loginPassword").value;
+  loginBtn.addEventListener("click", async () => {
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
 
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      await user.reload();
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
 
-      if (!user.emailVerified) {
-        alert("📩 Lütfen e-posta adresinizi doğrulayın. Gelen kutunuzu ve spam klasörünü kontrol edin.");
-        await sendEmailVerification(user, {
-          url: "https://evlilikyolutr.netlify.app/login/verify-success.html"
-        });
-        await signOut(auth);
-        return;
-      }
+    await user.reload(); // Bu şart
+    const refreshedUser = auth.currentUser;
 
-      window.location.href = "/home/home.html";
-    } catch (error) {
-      alert("❌ Giriş başarısız: " + error.message);
+    if (!refreshedUser.emailVerified) {
+      alert("📩 Lütfen e-posta adresinizi doğrulayın. Gelen kutunuzu ve spam klasörünü kontrol edin.");
+      await sendEmailVerification(refreshedUser, {
+        url: "https://evlilikyolutr.netlify.app/login/verify-success.html"
+      });
+      await signOut(auth);
+      return;
     }
-  });
+
+    window.location.href = "/home/home.html";
+  } catch (error) {
+    alert("❌ Giriş başarısız: " + error.message);
+  }
+});
+
 
   // Kayıt paneli göster
   showRegisterBtn?.addEventListener("click", () => {
