@@ -8,6 +8,7 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
+  fetchSignInMethodsForEmail,
   sendPasswordResetEmail,
   signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -133,6 +134,7 @@ googleLoginBtn.addEventListener("click", async () => {
       });
     }
 
+    // Google hesabı zaten verified kabul edilir
     window.location.href = "/home/home.html";
   } catch (error) {
     alert("❌ Google ile giriş başarısız: " + error.message);
@@ -141,13 +143,19 @@ googleLoginBtn.addEventListener("click", async () => {
 
 // Şifremi unuttum
 forgotPasswordBtn.addEventListener("click", async () => {
-  const email = document.getElementById("loginEmail").value.trim();
+  const email = prompt("📧 Lütfen şifre sıfırlama bağlantısı göndermek için e-posta adresinizi yazın:");
   if (!email) {
-    alert("📧 Şifre sıfırlama için lütfen e-posta adresinizi girin.");
+    alert("E-posta adresi girilmedi.");
     return;
   }
 
   try {
+    const methods = await fetchSignInMethodsForEmail(auth, email);
+    if (methods.length === 0) {
+      alert("❌ Bu e-posta adresi ile kayıtlı bir kullanıcı bulunamadı.");
+      return;
+    }
+
     await sendPasswordResetEmail(auth, email);
     alert("📩 Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.");
   } catch (error) {
@@ -155,9 +163,4 @@ forgotPasswordBtn.addEventListener("click", async () => {
   }
 });
 
-// Otomatik yönlendirme
-onAuthStateChanged(auth, (user) => {
-  if (user && user.emailVerified) {
-    window.location.href = "/home/home.html";
-  }
-});
+//
