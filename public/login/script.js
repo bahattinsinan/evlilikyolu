@@ -1,22 +1,21 @@
+// public/login/script.js
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  sendPasswordResetEmail,
-  GoogleAuthProvider,
+  sendEmailVerification,
   signInWithPopup,
-  onAuthStateChanged,
-  sendEmailVerification
+  GoogleAuthProvider,
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   getFirestore,
   doc,
-  setDoc,
-  getDoc
+  setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyBXDPSHzYwDKJMKflRPaC-egd-r6dLzL6U",
   authDomain: "evlilikyolutr.firebaseapp.com",
@@ -30,121 +29,97 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
 
-// 🚪 Giriş Yap
-document.querySelector(".btn-primary").addEventListener("click", async () => {
-  const email = document.querySelector("input[type='email']").value;
-  const password = document.querySelector("input[type='password']").value;
+// Kayıt işlemi
+const submitRegister = document.getElementById("submitRegister");
+submitRegister.addEventListener("click", async () => {
+  const nickname = document.getElementById("nickname").value;
+  const email = document.getElementById("registerEmail").value;
+  const password = document.getElementById("registerPassword").value;
+  const repeat = document.getElementById("registerPasswordRepeat").value;
+  const age = parseInt(document.getElementById("ageInput").value);
+  const city = document.getElementById("city").value;
+  const gender = document.querySelector('input[name="gender"]:checked')?.value;
+  const lookingFor = document.querySelector('input[name="lookingFor"]:checked')?.value;
 
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
-
-    if (!user.emailVerified) {
-      alert("Lütfen e-posta adresini doğrula. Mail kutunu kontrol et.");
-      return;
-    }
-
-    const userRef = doc(db, "users", user.uid);
-    const userSnap = await getDoc(userRef);
-
-    if (userSnap.exists()) {
-      location.href = "/home/home.html";
-    }
-  } catch (error) {
-    alert("Giriş yapılamadı: " + error.message);
+  if (!nickname || !email || !password || !repeat || !gender || !lookingFor || !city || isNaN(age)) {
+    alert("Tüm alanları doldurunuz.");
+    return;
   }
-});
 
-// 🧾 Kayıt Ol
-document.querySelector("#registerPanel .btn-primary").addEventListener("click", async () => {
-  const inputs = document.querySelectorAll("#registerPanel input");
-  const nickname = inputs[0].value;
-  const email = inputs[1].value;
-  const password = inputs[2].value;
-  const confirm = inputs[3].value;
-  const age = inputs[4].value;
-  const city = inputs[7].value;
+  if (password !== repeat) {
+    alert("Şifreler uyuşmuyor.");
+    return;
+  }
 
-  if (password !== confirm) return alert("Şifreler eşleşmiyor");
-
-  const gender = document.querySelectorAll(".gender-options")[0].querySelector(".selected")?.textContent || "";
-  const lookingFor = document.querySelectorAll(".gender-options")[1].querySelector(".selected")?.textContent || "";
-
-  if (!gender || !lookingFor) return alert("Lütfen cinsiyet ve aradığı cinsiyeti seçin.");
+  if (age < 18) {
+    alert("18 yaşından küçükler kayıt olamaz.");
+    return;
+  }
 
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
+    await sendEmailVerification(userCredential.user);
 
-    await sendEmailVerification(user);
-
-    await setDoc(doc(db, "users", user.uid), {
-      uid: user.uid,
+    await setDoc(doc(db, "users", userCredential.user.uid), {
+      uid: userCredential.user.uid,
       displayName: nickname,
-      email,
-      age,
-      gender,
-      lookingFor,
-      city,
+      email: email,
+      age: age,
+      city: city,
+      gender: gender,
+      lookingFor: lookingFor,
       membership: "standart",
-      tokens: 0,
-      profileImage: "/images/default-avatar.png",
-      createdAt: new Date().toISOString()
+      profileImage: "/images/avatar.png",
+      bio: "",
+      tokens: 0
     });
 
-    alert("Kayıt başarılı! Lütfen e-posta adresini doğrula.");
-  } catch (error) {
-    alert("Kayıt başarısız: " + error.message);
-  }
-});
-
-// 🔘 Cinsiyet ve aradığı cinsiyet seçimi
-document.querySelectorAll(".gender-options button").forEach(btn => {
-  btn.addEventListener("click", () => {
-    btn.parentElement.querySelectorAll("button").forEach(b => b.classList.remove("selected"));
-    btn.classList.add("selected");
-  });
-});
-
-// 🔐 Şifremi Unuttum
-document.querySelectorAll(".btn-secondary")[1].addEventListener("click", async () => {
-  const email = prompt("Şifreni sıfırlamak için e-posta adresini gir:");
-  if (!email) return;
-
-  try {
-    await sendPasswordResetEmail(auth, email);
-    alert("Şifre sıfırlama bağlantısı e-posta adresine gönderildi.");
+    alert("Kayıt başarılı. Lütfen e-posta adresinizi doğrulayın.");
   } catch (error) {
     alert("Hata: " + error.message);
   }
 });
 
-// 🔐 Google ile Giriş
-document.querySelectorAll(".btn-secondary")[2].addEventListener("click", async () => {
+// Giriş işlemi
+const loginBtn = document.getElementById("loginBtn");
+loginBtn.addEventListener("click", async () => {
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
+
   try {
-    const provider = new GoogleAuthProvider();
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    if (!userCredential.user.emailVerified) {
+      alert("Lütfen e-posta adresinizi doğrulayın.");
+      return;
+    }
+    location.href = "/home/home.html";
+  } catch (error) {
+    alert("Hata: " + error.message);
+  }
+});
+
+// Google ile giriş
+const googleLogin = document.getElementById("googleLogin");
+googleLogin.addEventListener("click", async () => {
+  try {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
 
-    const userRef = doc(db, "users", user.uid);
-    const userSnap = await getDoc(userRef);
-
-    if (!userSnap.exists()) {
-      await setDoc(userRef, {
-        uid: user.uid,
-        displayName: user.displayName || "",
-        email: user.email,
-        age: "",
-        gender: "",
-        lookingFor: "",
-        city: "",
-        membership: "standart",
-        tokens: 0,
-        profileImage: "/images/default-avatar.png",
-        createdAt: new Date().toISOString()
-      });
-    }
+    await setDoc(doc(db, "users", user.uid), {
+      uid: user.uid,
+      displayName: user.displayName || "Bilinmeyen",
+      email: user.email,
+      age: 18,
+      city: "",
+      gender: "",
+      lookingFor: "",
+      membership: "standart",
+      profileImage: user.photoURL || "/images/avatar.png",
+      bio: "",
+      tokens: 0
+    }, { merge: true });
 
     location.href = "/home/home.html";
   } catch (error) {
