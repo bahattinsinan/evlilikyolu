@@ -31,7 +31,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// 🚀 Giriş
+// 🚪 Giriş Yap
 document.querySelector(".btn-primary").addEventListener("click", async () => {
   const email = document.querySelector("input[type='email']").value;
   const password = document.querySelector("input[type='password']").value;
@@ -41,7 +41,7 @@ document.querySelector(".btn-primary").addEventListener("click", async () => {
     const user = userCredential.user;
 
     if (!user.emailVerified) {
-      alert("Lütfen e-postanı doğrula. Mail kutunu kontrol et.");
+      alert("Lütfen e-posta adresini doğrula. Mail kutunu kontrol et.");
       return;
     }
 
@@ -49,19 +49,14 @@ document.querySelector(".btn-primary").addEventListener("click", async () => {
     const userSnap = await getDoc(userRef);
 
     if (userSnap.exists()) {
-      const userData = userSnap.data();
-      if (!userData.avatarSecildiMi) {
-        location.href = "/profile/avatar.html";
-      } else {
-        location.href = "/home/home.html";
-      }
+      location.href = "/home/home.html";
     }
   } catch (error) {
     alert("Giriş yapılamadı: " + error.message);
   }
 });
 
-// 🧾 Kayıt (Kayıdı Tamamla butonu)
+// 🧾 Kayıt Ol
 document.querySelector("#registerPanel .btn-primary").addEventListener("click", async () => {
   const inputs = document.querySelectorAll("#registerPanel input");
   const nickname = inputs[0].value;
@@ -76,7 +71,7 @@ document.querySelector("#registerPanel .btn-primary").addEventListener("click", 
   const gender = document.querySelectorAll(".gender-options")[0].querySelector(".selected")?.textContent || "";
   const lookingFor = document.querySelectorAll(".gender-options")[1].querySelector(".selected")?.textContent || "";
 
-  if (!gender || !lookingFor) return alert("Lütfen cinsiyet ve aradığı cinsiyeti seç");
+  if (!gender || !lookingFor) return alert("Lütfen cinsiyet ve aradığı cinsiyeti seçin.");
 
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -94,17 +89,17 @@ document.querySelector("#registerPanel .btn-primary").addEventListener("click", 
       city,
       membership: "standart",
       tokens: 0,
-      avatarSecildiMi: false,
+      profileImage: "/images/default-avatar.png",
       createdAt: new Date().toISOString()
     });
 
-    alert("Kayıt başarılı! Lütfen e-postanı doğrula.");
+    alert("Kayıt başarılı! Lütfen e-posta adresini doğrula.");
   } catch (error) {
-    alert("Kayıt hatası: " + error.message);
+    alert("Kayıt başarısız: " + error.message);
   }
 });
 
-// 🔁 Cinsiyet seçme kutucukları
+// 🔘 Cinsiyet ve aradığı cinsiyet seçimi
 document.querySelectorAll(".gender-options button").forEach(btn => {
   btn.addEventListener("click", () => {
     btn.parentElement.querySelectorAll("button").forEach(b => b.classList.remove("selected"));
@@ -112,14 +107,14 @@ document.querySelectorAll(".gender-options button").forEach(btn => {
   });
 });
 
-// 🔑 Şifremi Unuttum
+// 🔐 Şifremi Unuttum
 document.querySelectorAll(".btn-secondary")[1].addEventListener("click", async () => {
   const email = prompt("Şifreni sıfırlamak için e-posta adresini gir:");
   if (!email) return;
 
   try {
     await sendPasswordResetEmail(auth, email);
-    alert("Şifre sıfırlama bağlantısı e-postana gönderildi.");
+    alert("Şifre sıfırlama bağlantısı e-posta adresine gönderildi.");
   } catch (error) {
     alert("Hata: " + error.message);
   }
@@ -146,12 +141,12 @@ document.querySelectorAll(".btn-secondary")[2].addEventListener("click", async (
         city: "",
         membership: "standart",
         tokens: 0,
-        avatarSecildiMi: false,
+        profileImage: "/images/default-avatar.png",
         createdAt: new Date().toISOString()
       });
     }
 
-    location.href = "/profile/avatar.html";
+    location.href = "/home/home.html";
   } catch (error) {
     alert("Google ile giriş başarısız: " + error.message);
   }
