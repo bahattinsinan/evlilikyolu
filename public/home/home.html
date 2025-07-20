@@ -39,9 +39,18 @@
   }
 
     @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
+  from { transform: rotateY(0deg); }
+  to { transform: rotateY(360deg); }
+}
+
+.heart {
+  position: absolute;
+  top: 15px;
+  font-size: 38px;
+  animation: spin 4s linear infinite, colorchange 5s infinite;
+  transform-style: preserve-3d;
+  transform-origin: center;
+}
 
     @keyframes colorchange {
       0% { color: pink; }
