@@ -114,7 +114,57 @@
       cursor: pointer;
     }
 
-    .help-input {
+    .help-button {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  background: linear-gradient(to right, #ff69b4, #ff1493);
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  transition: transform 0.2s ease;
+}
+
+.help-button:hover {
+  transform: scale(1.1);
+}
+
+.help-panel {
+  position: fixed;
+  bottom: 140px;
+  right: 20px;
+  width: 320px;
+  max-height: 500px;
+  background: white;
+  color: black;
+  border-radius: 15px;
+  display: none;
+  flex-direction: column;
+  box-shadow: 0 0 15px rgba(0,0,0,0.5);
+  overflow: hidden;
+  z-index: 9999;
+}
+
+.help-header {
+  background: linear-gradient(to right, #ff69b4, #ff1493);
+  color: white;
+  padding: 12px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.help-messages {
+  flex: 1;
+  padding: 12px;
+  overflow-y: auto;
+  font-size: 14px;
+}
+
+.help-input {
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
@@ -495,4 +545,18 @@ function showGiftIban() {
     <button onclick="closeGiftPopup()" style="margin-top:15px;">Kapat</button>
   </div>
 </div>
+<button class="help-button" onclick="toggleHelp()">💬</button>
+
+<div class="help-panel" id="helpPanel">
+  <div class="help-header">Canlı Destek - Admin</div>
+  <div class="help-messages" id="helpMessages">
+    <p><strong>Admin:</strong> Tüm temsilcilerimiz diğer kullanıcılarımıza hizmet vermektedir.<br> Maksimum 5 dakika içinde sizlere dönüş yapılacaktır.</p>
+  </div>
+  <div class="help-input">
+    <input type="text" id="helpInput" placeholder="Mesaj yaz..." />
+    <input type="file" id="helpFile" />
+    <button onclick="sendHelpMessage()">Gönder</button>
+  </div>
+</div>
+
 
