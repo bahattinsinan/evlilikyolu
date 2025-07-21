@@ -103,49 +103,44 @@
     </div>
   </div>
 
-  <!-- POPUP HTML BURADA -->
-   <div id="goldPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; z-index:9999;">
-  <div style="background:#fff; padding:20px; border-radius:10px; max-width:300px; width:90%;">
-    <h3>Pro Üyelik Seç</h3>
-    <select id="goldSelect" onchange="showGoldIban()" style="width:100%; padding:10px; margin-bottom:10px;">
+  <!-- PRO ÜYELİK POPUP -->
+<div id="goldPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; z-index:9999;">
+  <div style="background:#8B0000; color:white; padding:20px; border-radius:10px; max-width:320px; width:90%;">
+    <h3 style="text-align:center;">🌟 Pro Üyelik Seç</h3>
+    <select id="goldSelect" onchange="showGoldIban()" style="width:100%; padding:10px; margin:15px 0; border-radius:6px;">
       <option value="">Süre Seçin</option>
       <option value="1">1 Ay – 100 TL</option>
       <option value="3">3 Ay – 250 TL</option>
       <option value="6">6 Ay – 500 TL</option>
       <option value="12">1 Yıl – 800 TL</option>
     </select>
-
-    <div id="goldIban" style="display:none;">
+    <div id="goldIban" style="display:none; margin-top:10px;">
       <p><strong>Ödeme Bilgileri:</strong></p>
-      <p id="goldIbanText">TR91 0001 0040 0452 2812 1550 07 - NEJLA KOÇ - Ziraat Bankası</p>
-      <button onclick="copyGoldIban()" style="background:#1565c0; color:#fff; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;">IBAN'ı Kopyala</button>
+      <p id="goldIbanText">TR91 0001 0040 0452 2812 1550 07<br>NEJLA KOÇ - Ziraat Bankası</p>
+      <button onclick="copyGoldIban()" style="background:white; color:#8B0000; border:none; padding:10px; border-radius:6px; cursor:pointer; width:100%; margin-top:10px;">IBAN'ı Kopyala</button>
     </div>
-
-     <div style="background:#8B0000; color:white; padding:20px; border-radius:10px; max-width:300px; width:90%;">
   </div>
 </div>
 
-  <div id="tokenPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; z-index:9999;">
-    <div style="background:#fff; padding:20px; border-radius:10px; max-width:300px; width:90%;">
-      <h3>Jeton Paketi Seç</h3>
-      <select id="tokenSelect" onchange="showTokenIban()" style="width:100%; padding:10px; margin-bottom:10px;">
-        <option value="">Paket Seçin</option>
-        <option value="50">50 Jeton – 50 TL</option>
-        <option value="100">100 Jeton – 75 TL</option>
-        <option value="250">250 Jeton – 150 TL</option>
-        <option value="500">500 Jeton – 250 TL</option>
-        <option value="1000">1000 Jeton – 400 TL</option>
-      </select>
-
-      <div id="tokenIban" style="display:none;">
-        <p><strong>Ödeme Bilgileri:</strong></p>
-        <p id="ibanText">TR91 0001 0040 0452 2812 1550 07 - NEJLA KOÇ - Ziraat Bankası</p>
-        <button onclick="copyIban()" style="background:#1565c0; color:#fff; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;">IBAN'ı Kopyala</button>
-      </div>
-
-      <div style="background:#8B0000; color:white; padding:20px; border-radius:10px; max-width:300px; width:90%;">
+<!-- JETON POPUP -->
+<div id="tokenPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; z-index:9999;">
+  <div style="background:#8B0000; color:white; padding:20px; border-radius:10px; max-width:320px; width:90%;">
+    <h3 style="text-align:center;">💰 Jeton Paketi Seç</h3>
+    <select id="tokenSelect" onchange="showTokenIban()" style="width:100%; padding:10px; margin:15px 0; border-radius:6px;">
+      <option value="">Paket Seçin</option>
+      <option value="50">50 Jeton – 50 TL</option>
+      <option value="100">100 Jeton – 75 TL</option>
+      <option value="250">250 Jeton – 150 TL</option>
+      <option value="500">500 Jeton – 250 TL</option>
+      <option value="1000">1000 Jeton – 400 TL</option>
+    </select>
+    <div id="tokenIban" style="display:none; margin-top:10px;">
+      <p><strong>Ödeme Bilgileri:</strong></p>
+      <p id="ibanText">TR91 0001 0040 0452 2812 1550 07<br>NEJLA KOÇ - Ziraat Bankası</p>
+      <button onclick="copyIban()" style="background:white; color:#8B0000; border:none; padding:10px; border-radius:6px; cursor:pointer; width:100%; margin-top:10px;">IBAN'ı Kopyala</button>
     </div>
   </div>
+</div>
 
   <!-- JAVASCRIPT -->
   <script>
