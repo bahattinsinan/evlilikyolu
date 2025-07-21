@@ -248,11 +248,14 @@
         const user = doc.data();
         const card = document.createElement("div");
         card.className = "user-card";
+        const imageUrl = user.profileImage && user.profileImage.trim() !== "" ? user.profileImage : "/images/default-avatar.png";
+
         card.innerHTML = `
-          <img src="${user.profileImage || '/images/default-avatar.png'}" alt="avatar">
-          <h4>${user.displayName || "Üye"}</h4>
-          <small>${user.age ? user.age + ' yaş' : ''}</small>
-        `;
+        <img src="${imageUrl}" alt="avatar">
+        <h4>${user.displayName || "Üye"}</h4>
+        <small>${user.age ? user.age + ' yaş' : ''}</small>
+       `;
+
         listDiv.appendChild(card);
       });
     }
