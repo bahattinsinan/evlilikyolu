@@ -88,30 +88,29 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Giriş
-  document.getElementById("loginBtn")?.addEventListener("click", async () => {
-    const email = document.getElementById("loginEmail").value;
-    const password = document.getElementById("loginPassword").value;
+document.getElementById("loginBtn")?.addEventListener("click", async () => {
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
 
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      await user.reload();
-      const refreshedUser = auth.currentUser;
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+    await user.reload(); // ✅ GÜNCEL bilgiyi al
 
-      if (!refreshedUser.emailVerified) {
-        alert("📩 Lütfen e-posta adresinizi doğrulayın. Gelen kutunuzu ve spam klasörünü kontrol edin.");
-        await sendEmailVerification(refreshedUser, {
-          url: "https://evlilikyolutr.netlify.app/login/verify-success.html"
-        });
-        await signOut(auth);
-        return;
-      }
-
-      window.location.href = "/home/home.html";
-    } catch (error) {
-      alert("❌ Giriş başarısız: " + error.message);
+    if (!user.emailVerified) { // ✅ Doğrudan user üzerinden kontrol et
+      alert("📩 Lütfen e-posta adresinizi doğrulayın. Gelen kutunuzu ve spam klasörünü kontrol edin.");
+      await sendEmailVerification(user, {
+        url: "https://evlilikyolutr.netlify.app/login/verify-success.html"
+      });
+      await signOut(auth);
+      return;
     }
-  });
+
+    window.location.href = "/home/home.html";
+  } catch (error) {
+    alert("❌ Giriş başarısız: " + error.message);
+  }
+});
 
   // Google ile giriş
   document.getElementById("googleLoginBtn")?.addEventListener("click", async () => {
