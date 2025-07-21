@@ -198,6 +198,13 @@
   <div class="online-users" id="onlineUsers">
     <!-- Firebase JS ile doldurulacak -->
   </div>
+  <div style="text-align: center; margin: 20px;">
+  <textarea id="shareText" placeholder="Ne düşünüyorsun?" style="width: 90%; max-width: 400px; height: 80px; padding: 10px; border-radius: 10px; border: 1px solid #ccc;"></textarea>
+  <br/>
+  <button onclick="submitShare()" style="margin-top: 10px; background: hotpink; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Paylaş</button>
+</div>
+
+<div id="sharedPosts" style="display: flex; flex-direction: column; align-items: center; gap: 15px; padding: 20px;"></div>
 
   <div class="bottom-menu">
     <button onclick="goTo('home')">🏠</button>
@@ -239,6 +246,52 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
 
+    import {
+  addDoc,
+  serverTimestamp,
+  collection,
+  query,
+  where,
+  orderBy,
+  onSnapshot
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+function filterBadWords(text) {
+  const blocked = ["amk", "orospu", "sikik", "piç", "aq", "salak", "aptal", "ananı", "siktir", "yarrak"];
+  let clean = text;
+  blocked.forEach(word => {
+    const reg = new RegExp(word, "gi");
+    clean = clean.replace(reg, "***");
+  });
+  return clean;
+}
+
+async function submitShare() {
+  const user = auth.currentUser;
+  if (!user) {
+    alert("Paylaşım yapabilmek için giriş yapmalısınız.");
+    return;
+  }
+
+  const text = document.getElementById("shareText").value.trim();
+  if (text === "") return;
+
+  const filteredText = filterBadWords(text);
+  const userDoc = await getDocs(query(collection(db, "users"), where("uid", "==", user.uid)));
+  const userData = userDoc.docs[0]?.data();
+
+  await addDoc(collection(db, "shares"), {
+    uid: user.uid,
+    text: filteredText,
+    createdAt: serverTimestamp(),
+    displayName: userData?.displayName || "Üye",
+    profileImage: userData?.profileImage || "/images/default-avatar.png",
+    age: userData?.age || ""
+  });
+
+  document.getElementById("shareText").value = "";
+}
+
     async function loadOnlineUsers() {
       const usersCol = collection(db, "users");
       const snapshot = await getDocs(usersCol);
@@ -251,17 +304,70 @@
         const imageUrl = user.profileImage && user.profileImage.trim() !== "" ? user.profileImage : "/images/default-avatar.png";
 
         card.innerHTML = `
-        <img src="${imageUrl}" alt="avatar">
-        <h4>${user.displayName || "Üye"}</h4>
-        <small>${user.age ? user.age + ' yaş' : ''}</small>
-       `;
+        <a href="/profile/profile-view.html?uid=${doc.id}" style="text-decoration: none; color: inherit;">
+       <img src="${imageUrl}" alt="avatar">
+       <h4>${user.displayName || "Üye"}</h4>
+       <small>${user.age ? user.age + ' yaş' : ''}</small>
+       </a>
+     `;
 
         listDiv.appendChild(card);
       });
     }
 
     loadOnlineUsers();
+    const sharedPostsDiv = document.getElementById("sharedPosts");
 
+const shareQuery = query(
+  collection(db, "shares"),
+  orderBy("createdAt", "desc")
+);
+
+// 72 saat önceki tarih
+const now = new Date();
+const threeDaysAgo = new Date(now.getTime() - 72 * 60 * 60 * 1000);
+
+// Paylaşımlar geldiğinde filtrele
+onSnapshot(shareQuery, (snapshot) => {
+  sharedPostsDiv.innerHTML = "";
+  snapshot.forEach((docSnap) => {
+    const post = docSnap.data();
+    const createdAt = post.createdAt?.toDate?.();
+
+    // 72 saatten eski ise sil
+    if (createdAt && createdAt < threeDaysAgo) {
+      deleteDoc(doc(db, "shares", docSnap.id));
+      return;
+    }
+
+    const postDiv = document.createElement("div");
+    postDiv.style.background = "rgba(0,0,0,0.6)";
+    postDiv.style.padding = "15px";
+    postDiv.style.borderRadius = "10px";
+    postDiv.style.maxWidth = "400px";
+    postDiv.style.width = "90%";
+    postDiv.style.color = "white";
+    postDiv.style.textAlign = "left";
+    postDiv.innerHTML = `
+      <a href="/profile/profile-view.html?uid=${post.uid}" style="color:white; text-decoration:none;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+          <img src="${post.profileImage}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+          <div>
+            <strong>${post.displayName}</strong><br/>
+            <small>${post.age ? post.age + " yaş" : ""}</small>
+          </div>
+        </div>
+      </a>
+      <p style="margin:10px 0;">${post.text}</p>
+      <div style="display:flex; justify-content:space-around;">
+        <button onclick="alert('Premium üye olmalısınız')" style="background: #ff69b4; color:white; border:none; border-radius:8px; padding:5px 10px;">Mesaj Gönder</button>
+        <button onclick="alert('Yeterli jetonunuz yok')" style="background: gold; color:black; border:none; border-radius:8px; padding:5px 10px;">Hediye Gönder</button>
+      </div>
+    `;
+    sharedPostsDiv.appendChild(postDiv);
+  });
+});
+  
     function goTo(page) {
       if (page === "home") location.href = "/home/home.html";
       if (page === "messages") alert("Mesaj kutusu için premium üye olun.");
