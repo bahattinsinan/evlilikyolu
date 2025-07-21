@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ne Düşünüyorsun?</title>
+  <link rel="stylesheet" href="share.css" />
+</head>
+<body>
+  <header>
+    <h1>📝 Ne Düşünüyorsun?</h1>
+    <button onclick="goHome()">Ana Sayfaya Dön</button>
+  </header>
+
+  <main>
+    <div class="share-box">
+      <textarea id="thoughtInput" placeholder="Bugün ne hissediyorsun?"></textarea>
+      <button onclick="submitThought()">Paylaş</button>
+      <p id="warningText" class="warning" style="display:none;">⚠️ Uygunsuz içerik tespit edildi. Lütfen tekrar deneyin.</p>
+    </div>
+
+    <div id="thoughtList" class="thought-list">
+      <!-- Gönderiler buraya düşecek -->
+    </div>
+  </main>
+
+  <script type="module" src="share.js"></script>
+  <script>
+    function goHome() {
+      window.location.href = "/home/home.html";
+    }
+  </script>
+</body>
+</html>
