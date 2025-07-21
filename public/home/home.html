@@ -114,51 +114,37 @@
       cursor: pointer;
     }
 
-    .help-button {
-      position: fixed;
-      bottom: 80px;
-      right: 20px;
-      background-color: #ff69b4;
-      color: white;
-      border: none;
-      padding: 10px;
-      border-radius: 50%;
-      font-size: 20px;
-      cursor: pointer;
-    }
-
-    .help-panel {
-      position: fixed;
-      bottom: 130px;
-      right: 20px;
-      width: 300px;
-      max-height: 400px;
-      background: white;
-      color: black;
-      border-radius: 10px;
-      display: none;
-      flex-direction: column;
-      box-shadow: 0 0 10px rgba(0,0,0,0.4);
-      overflow: hidden;
-    }
-
-    .help-header {
-      background-color: #ff69b4;
-      color: white;
-      padding: 10px;
-      font-weight: bold;
-    }
-
-    .help-messages {
-      flex: 1;
-      padding: 10px;
-      overflow-y: auto;
-    }
-
     .help-input {
-      display: flex;
-      border-top: 1px solid #ccc;
-    }
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  border-top: 1px solid #ccc;
+  padding: 10px;
+  background: #f8f8f8;
+}
+
+.help-input input[type="text"] {
+  flex: 1 1 100%;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.help-input input[type="file"] {
+  flex: 1 1 60%;
+  font-size: 12px;
+}
+
+.help-input button {
+  flex: 1 1 35%;
+  background: #ff69b4;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
 
     .help-input input[type="file"],
     .help-input input[type="text"] {
