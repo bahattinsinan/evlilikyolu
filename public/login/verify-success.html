@@ -31,29 +31,46 @@
   </style>
 </head>
 <body>
-  <div class="box">
-    <h2>✅ E-posta adresiniz başarıyla doğrulandı!</h2>
-    <p>3 saniye içinde giriş sayfasına yönlendirileceksiniz...</p>
-    <a href="/login/login.html">Manuel Git</a>
+  <div class="box" id="messageBox">
+    <h2>⏳ Doğrulama kontrol ediliyor...</h2>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getAuth, applyActionCode } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { firebaseConfig } from "/firebaseConfig.js";
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        await signOut(auth);
-      }
-    });
+    const params = new URLSearchParams(window.location.search);
+    const oobCode = params.get("oobCode");
 
-    setTimeout(() => {
-      window.location.href = "/login/login.html";
-    }, 3000);
+    if (oobCode) {
+      applyActionCode(auth, oobCode)
+        .then(() => {
+          document.getElementById("messageBox").innerHTML = `
+            <h2>✅ E-posta adresiniz başarıyla doğrulandı!</h2>
+            <p>3 saniye içinde giriş sayfasına yönlendirileceksiniz...</p>
+            <a href="/login/login.html">Manuel Git</a>
+          `;
+          setTimeout(() => {
+            window.location.href = "/login/login.html";
+          }, 3000);
+        })
+        .catch((error) => {
+          document.getElementById("messageBox").innerHTML = `
+            <h2>❌ Doğrulama başarısız</h2>
+            <p>Geçersiz veya süresi dolmuş bağlantı.</p>
+            <a href="/login/login.html">Giriş Sayfasına Dön</a>
+          `;
+        });
+    } else {
+      document.getElementById("messageBox").innerHTML = `
+        <h2>❌ Geçersiz bağlantı</h2>
+        <a href="/login/login.html">Giriş Sayfasına Dön</a>
+      `;
+    }
   </script>
 </body>
 </html>
