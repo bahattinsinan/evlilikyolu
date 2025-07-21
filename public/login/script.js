@@ -118,12 +118,10 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-
       await user.reload();
-      const refreshedUser = auth.currentUser;
 
-      if (!refreshedUser.emailVerified) {
-        await sendEmailVerification(refreshedUser, {
+      if (!user.emailVerified) {
+        await sendEmailVerification(user, {
           url: "https://evlilikyolutr.netlify.app/login/verify-success.html"
         });
 
@@ -154,4 +152,5 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("❌ Google ile giriş başarısız: " + error.message);
     }
   });
+
 });
