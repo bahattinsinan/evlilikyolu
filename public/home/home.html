@@ -316,12 +316,44 @@ async function submitShare() {
     }
 
     loadOnlineUsers();
-    const sharedPostsDiv = document.getElementById("sharedPosts");
+    // 🧠 1. Adım: Fonksiyon tanımı
+async function loadOnlineUsers() {
+  const q = query(collection(db, "onlineUsers"));
+  const snapshot = await getDocs(q);
+  const listDiv = document.getElementById("onlineUsers");
+  listDiv.innerHTML = "";
 
+  snapshot.forEach((doc) => {
+    const user = doc.data();
+    const card = document.createElement("div");
+    card.className = "user-card";
+    const imageUrl = user.profileImage && user.profileImage.trim() !== "" ? user.profileImage : "/images/default-avatar.png";
+
+    card.innerHTML = `
+      <a href="/profile/profile-view.html?uid=${user.uid}" style="text-decoration: none; color: inherit;">
+        <img src="${imageUrl}" alt="avatar">
+        <h4>${user.displayName || "Üye"}</h4>
+        <small>${user.age ? user.age + " yaş" : ""}</small>
+      </a>
+    `;
+
+    listDiv.appendChild(card);
+  });
+}
+
+// 🧠 2. Adım: Fonksiyonu çağır
+loadOnlineUsers();
+
+// 🧠 3. Adım: Paylaşım verileri burada devam eder
 const shareQuery = query(
   collection(db, "shares"),
   orderBy("createdAt", "desc")
 );
+
+    const sharedPostsDiv = document.getElementById("sharedPosts");
+
+  collection(db, "shares"),
+  orderBy("createdAt", "desc")
 
 // 72 saat önceki tarih
 const now = new Date();
