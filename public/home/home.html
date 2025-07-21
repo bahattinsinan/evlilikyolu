@@ -468,44 +468,43 @@ function closeGiftPopup() {
     window.submitShare = submitShare;
   </script>
 
-<div id="giftPopup" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%);
-background:white; color:black; padding:20px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.5); z-index:9999; text-align:center; max-width:320px;">
-  <h3 style="margin-bottom: 15px;">🎁 Hediye göndermek için jeton almalısınız</h3>
-  <p style="margin-bottom:10px;">Lütfen bir paket seçin:</p>
-  <select id="giftSelect" onchange="showGiftIban()" style="width:100%; padding:8px; margin-bottom:10px;">
-    <option value="">-- Paket Seçin --</option>
-    <option value="50 Jeton: 50 TL">50 Jeton: 50 TL</option>
-    <option value="100 Jeton: 75 TL">100 Jeton: 75 TL</option>
-    <option value="250 Jeton: 150 TL">250 Jeton: 150 TL</option>
-  </select>
-  <div id="giftIban" style="display:none; text-align:left; font-size:14px; margin-top:10px;">
-    <strong>Ödeme Bilgileri:</strong><br/>
-    IBAN: <span style="font-weight:bold;">TR91 0001 0040 0452 2812 1550 07</span><br/>
-    Alıcı: NEJLA KOÇ<br/>
-    Banka: Ziraat Bankası
+<!-- Premium Popup -->
+<div id="goldPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); color:white; z-index:9999; padding:20px;">
+  <div style="max-width:500px; margin:100px auto; background:#222; padding:20px; border-radius:10px;">
+    <h2>Premium Üye Olmalısınız</h2>
+    <p>Mesaj gönderebilmek için aşağıdan bir paket seçiniz:</p>
+    <select id="goldSelect" onchange="showGoldIban()">
+      <option value="">Paket Seçin</option>
+      <option value="1ay">1 Ay – 100 TL</option>
+      <option value="3ay">3 Ay – 250 TL</option>
+      <option value="6ay">6 Ay – 500 TL</option>
+      <option value="12ay">1 Yıl – 800 TL</option>
+    </select>
+    <div id="goldIban" style="display:none; margin-top:10px;">
+      <p><strong>IBAN:</strong> TR91 0001 0040 0452 2812 1550 07</p>
+      <p><strong>Alıcı:</strong> NEJLA KOÇ</p>
+      <p><strong>Banka:</strong> Ziraat Bankası</p>
+    </div>
+    <button onclick="closeGoldPopup()" style="margin-top:15px;">Kapat</button>
   </div>
-  <button onclick="closeGiftPopup()" style="margin-top:15px; background:crimson; color:white; border:none; padding:8px 15px; border-radius:6px;">Kapat</button>
 </div>
 
-  <div id="goldPopup" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%);
-background:white; color:black; padding:20px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.5); z-index:9999; text-align:center; max-width:320px;">
-  <h3 style="margin-bottom: 15px;">🔒 Bu işlem için Premium Üye olmalısınız</h3>
-  <p style="margin-bottom:10px;">Lütfen bir paket seçin:</p>
-  <select id="goldSelect" onchange="showGoldIban()" style="width:100%; padding:8px; margin-bottom:10px;">
-    <option value="">-- Paket Seçin --</option>
-    <option value="1 Ay: 100 TL">1 Ay: 100 TL</option>
-    <option value="3 Ay: 250 TL">3 Ay: 250 TL</option>
-    <option value="6 Ay: 500 TL">6 Ay: 500 TL</option>
-    <option value="1 Yıl: 800 TL">1 Yıl: 800 TL</option>
-  </select>
-  <div id="goldIban" style="display:none; text-align:left; font-size:14px; margin-top:10px;">
-    <strong>Ödeme Bilgileri:</strong><br/>
-    IBAN: <span style="font-weight:bold;">TR91 0001 0040 0452 2812 1550 07</span><br/>
-    Alıcı: NEJLA KOÇ<br/>
-    Banka: Ziraat Bankası
+<!-- Hediye Popup -->
+<div id="giftPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); color:white; z-index:9999; padding:20px;">
+  <div style="max-width:500px; margin:100px auto; background:#222; padding:20px; border-radius:10px;">
+    <h2>Yeterli Jetonunuz Yok</h2>
+    <p>Hediye gönderebilmek için jeton paketi seçiniz:</p>
+    <select id="giftSelect" onchange="showGiftIban()">
+      <option value="">Paket Seçin</option>
+      <option value="50">50 Jeton – 50 TL</option>
+      <option value="100">100 Jeton – 75 TL</option>
+      <option value="250">250 Jeton – 150 TL</option>
+    </select>
+    <div id="giftIban" style="display:none; margin-top:10px;">
+      <p><strong>IBAN:</strong> TR91 0001 0040 0452 2812 1550 07</p>
+      <p><strong>Alıcı:</strong> NEJLA KOÇ</p>
+      <p><strong>Banka:</strong> Ziraat Bankası</p>
+    </div>
+    <button onclick="closeGiftPopup()" style="margin-top:15px;">Kapat</button>
   </div>
-  <button onclick="closeGoldPopup()" style="margin-top:15px; background:crimson; color:white; border:none; padding:8px 15px; border-radius:6px;">Kapat</button>
 </div>
-
-</body>
-</html>
