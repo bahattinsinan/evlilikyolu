@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profilim</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #fff;
+    }
+
+    .profile-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .profile-header {
+      width: 100%;
+      padding: 20px;
+      text-align: center;
+      color: white;
+    }
+
+    .profile-image {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid white;
+      margin-bottom: 10px;
+    }
+
+    .icon-buttons {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .icon-buttons button {
+      font-size: 24px;
+      padding: 6px 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .membership {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .profile-section {
+      width: 90%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .profile-section button {
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      color: white;
+    }
+
+    .bio-box {
+      background-color: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 10px;
+      max-width: 400px;
+      margin-bottom: 15px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+
+<div class="profile-header" id="profileHeader">
+  <div class="profile-container">
+    <img id="userImage" class="profile-image" src="/images/default-avatar.png" alt="Kullanıcı Resmi" />
+    
+    <div class="icon-buttons">
+      <button onclick="location.href='/profile/gallery.html'">🖼️</button>
+      <button onclick="location.href='/profile/settings.html'">⚙️</button>
+      <button onclick="location.href='/profile/bio-edit.html'">✏️</button>
+      <button onclick="location.href='/profile/photo.html'">📷</button>
+    </div>
+
+    <div class="membership" id="membershipStatus">Yükleniyor...</div>
+    <div class="bio-box" id="bioBox">Kendinizi tanıtın... (En fazla 150 kelime)</div>
+  </div>
+</div>
+
+<div class="profile-section" id="actionButtons">
+  <button id="btnTokens">🪙 Jeton Al</button>
+  <button id="btnUpgrade">💎 Pro Üye Ol</button>
+  <button id="btnVisitors">🧍 Profilimi Ziyaret Edenler</button>
+  <button id="btnMessages">💌 Gelen Mesajlar</button>
+  <button id="btnGifts">🎁 Gelen Hediyeler</button>
+  <button id="btnViews">👁‍🗨 Profilim Kaç Kere Görüntülendi</button>
+  <button id="btnPrivacy">🔒 Gizlilik Ayarları</button>
+</div>
+
+<script type="module">
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { app } from "/firebaseConfig.js";
+
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) return location.href = "/login/login.html";
+
+    const ref = doc(db, "users", user.uid);
+    const snap = await getDoc(ref);
+    const data = snap.data();
+
+    document.getElementById("userImage").src = data.profileImage || "/images/default-avatar.png";
+    document.getElementById("membershipStatus").textContent = data.membership || "Standart Üye";
+    document.getElementById("bioBox").textContent = data.bio || "Henüz bir açıklama yazılmamış.";
+
+    const gender = data.gender || "";
+    document.body.style.background = gender === "erkek" ? "#0c4a8b" : gender === "kadın" ? "#e75480" : "#444";
+    
+    // Buton bağlantıları
+    document.getElementById("btnTokens").onclick = () => location.href = "/tokens.html";
+    document.getElementById("btnUpgrade").onclick = () => location.href = "/upgrade.html";
+    document.getElementById("btnVisitors").onclick = () => location.href = "/visitors.html";
+    document.getElementById("btnMessages").onclick = () => location.href = "/messages/messages.html";
+    document.getElementById("btnGifts").onclick = () => location.href = "/gifts/gifts.html";
+    document.getElementById("btnViews").onclick = () => alert("Bu özellik yakında aktif olacaktır.");
+    document.getElementById("btnPrivacy").onclick = () => alert("Bu özellik yakında aktif olacaktır.");
+  });
+</script>
+
+</body>
+</html>
