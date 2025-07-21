@@ -95,7 +95,7 @@
 
     <div class="action-buttons">      
       <button onclick="showTokenPopup()">💰 Jeton Al</button>
-      <button onclick="location.href='/upgrade.html'">🌟 Pro Üye Ol</button>
+      <button onclick="showGoldPopup()">🌟 Pro Üye Ol</button>
       <button onclick="location.href='/visitors.html'">👀 Profilimi Ziyaret Edenler</button>
       <button onclick="location.href='/messages.html'">💌 Gelen Mesajlar</button>
       <button onclick="location.href='/gifts.html'">🎁 Gelen Hediyeler</button>
@@ -104,6 +104,27 @@
   </div>
 
   <!-- POPUP HTML BURADA -->
+   <div id="goldPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; z-index:9999;">
+  <div style="background:#fff; padding:20px; border-radius:10px; max-width:300px; width:90%;">
+    <h3>Pro Üyelik Seç</h3>
+    <select id="goldSelect" onchange="showGoldIban()" style="width:100%; padding:10px; margin-bottom:10px;">
+      <option value="">Süre Seçin</option>
+      <option value="1">1 Ay – 100 TL</option>
+      <option value="3">3 Ay – 250 TL</option>
+      <option value="6">6 Ay – 500 TL</option>
+      <option value="12">1 Yıl – 800 TL</option>
+    </select>
+
+    <div id="goldIban" style="display:none;">
+      <p><strong>Ödeme Bilgileri:</strong></p>
+      <p id="goldIbanText">TR91 0001 0040 0452 2812 1550 07 - NEJLA KOÇ - Ziraat Bankası</p>
+      <button onclick="copyGoldIban()" style="background:#1565c0; color:#fff; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;">IBAN'ı Kopyala</button>
+    </div>
+
+     <div style="background:#8B0000; color:white; padding:20px; border-radius:10px; max-width:300px; width:90%;">
+  </div>
+</div>
+
   <div id="tokenPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; z-index:9999;">
     <div style="background:#fff; padding:20px; border-radius:10px; max-width:300px; width:90%;">
       <h3>Jeton Paketi Seç</h3>
@@ -122,7 +143,7 @@
         <button onclick="copyIban()" style="background:#1565c0; color:#fff; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;">IBAN'ı Kopyala</button>
       </div>
 
-      <button onclick="closeTokenPopup()" style="margin-top:10px; background:#aaa; color:white; border:none; padding:8px 12px; border-radius:6px;">Kapat</button>
+      <div style="background:#8B0000; color:white; padding:20px; border-radius:10px; max-width:300px; width:90%;">
     </div>
   </div>
 
@@ -148,6 +169,28 @@
         alert("IBAN kopyalandı!");
       });
     }
+
+    function showGoldPopup() {
+  document.getElementById("goldPopup").style.display = "flex";
+}
+
+function closeGoldPopup() {
+  document.getElementById("goldPopup").style.display = "none";
+}
+
+function showGoldIban() {
+  const select = document.getElementById("goldSelect");
+  const iban = document.getElementById("goldIban");
+  iban.style.display = select.value ? "block" : "none";
+}
+
+function copyGoldIban() {
+  const iban = document.getElementById("goldIbanText").textContent;
+  navigator.clipboard.writeText(iban).then(() => {
+    alert("IBAN kopyalandı!");
+  });
+}
+
   </script>
 </body>
 </html>
