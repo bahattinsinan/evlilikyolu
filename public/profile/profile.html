@@ -105,9 +105,10 @@
 
   <!-- PRO ÜYELİK POPUP -->
 <div id="goldPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; z-index:9999;">
-  <div style="background:#8B0000; color:white; padding:20px; border-radius:10px; max-width:320px; width:90%;">
-    <h3 style="text-align:center;">🌟 Pro Üyelik Seç</h3>
-    <select id="goldSelect" onchange="showGoldIban()" style="width:100%; padding:10px; margin:15px 0; border-radius:6px;">
+  <div style="background:#8B0000; color:white; padding:20px; border-radius:10px; max-width:320px; width:90%; position:relative;">
+    <span onclick="closeGoldPopup()" style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:20px;">✖</span>
+    <h3 style="text-align:center; font-weight:bold; font-size:22px;">🌟 Pro Üyelik Seç</h3>
+    <select id="goldSelect" onchange="showGoldIban()" style="width:100%; padding:10px; margin:15px 0; border-radius:6px; font-weight:bold; font-size:16px;">
       <option value="">Süre Seçin</option>
       <option value="1">1 Ay – 100 TL</option>
       <option value="3">3 Ay – 250 TL</option>
@@ -116,17 +117,18 @@
     </select>
     <div id="goldIban" style="display:none; margin-top:10px;">
       <p><strong>Ödeme Bilgileri:</strong></p>
-      <p id="goldIbanText">TR91 0001 0040 0452 2812 1550 07<br>NEJLA KOÇ - Ziraat Bankası</p>
-      <button onclick="copyGoldIban()" style="background:white; color:#8B0000; border:none; padding:10px; border-radius:6px; cursor:pointer; width:100%; margin-top:10px;">IBAN'ı Kopyala</button>
+      <p id="goldIbanText" style="font-weight:bold;">TR91 0001 0040 0452 2812 1550 07<br>NEJLA KOÇ - Ziraat Bankası</p>
+      <button onclick="copyGoldIban()" style="background:white; color:#8B0000; border:none; padding:10px; border-radius:6px; cursor:pointer; width:100%; margin-top:10px; font-weight:bold;">IBAN'ı Kopyala</button>
     </div>
   </div>
 </div>
 
 <!-- JETON POPUP -->
 <div id="tokenPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; z-index:9999;">
-  <div style="background:#8B0000; color:white; padding:20px; border-radius:10px; max-width:320px; width:90%;">
-    <h3 style="text-align:center;">💰 Jeton Paketi Seç</h3>
-    <select id="tokenSelect" onchange="showTokenIban()" style="width:100%; padding:10px; margin:15px 0; border-radius:6px;">
+  <div style="background:#8B0000; color:white; padding:20px; border-radius:10px; max-width:320px; width:90%; position:relative;">
+    <span onclick="closeTokenPopup()" style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:20px;">✖</span>
+    <h3 style="text-align:center; font-weight:bold; font-size:22px;">💰 Jeton Paketi Seç</h3>
+    <select id="tokenSelect" onchange="showTokenIban()" style="width:100%; padding:10px; margin:15px 0; border-radius:6px; font-weight:bold; font-size:16px;">
       <option value="">Paket Seçin</option>
       <option value="50">50 Jeton – 50 TL</option>
       <option value="100">100 Jeton – 75 TL</option>
@@ -136,56 +138,53 @@
     </select>
     <div id="tokenIban" style="display:none; margin-top:10px;">
       <p><strong>Ödeme Bilgileri:</strong></p>
-      <p id="ibanText">TR91 0001 0040 0452 2812 1550 07<br>NEJLA KOÇ - Ziraat Bankası</p>
-      <button onclick="copyIban()" style="background:white; color:#8B0000; border:none; padding:10px; border-radius:6px; cursor:pointer; width:100%; margin-top:10px;">IBAN'ı Kopyala</button>
+      <p id="ibanText" style="font-weight:bold;">TR91 0001 0040 0452 2812 1550 07<br>NEJLA KOÇ - Ziraat Bankası</p>
+      <button onclick="copyIban()" style="background:white; color:#8B0000; border:none; padding:10px; border-radius:6px; cursor:pointer; width:100%; margin-top:10px; font-weight:bold;">IBAN'ı Kopyala</button>
     </div>
   </div>
 </div>
 
-  <!-- JAVASCRIPT -->
-  <script>
-    function showTokenPopup() {
-      document.getElementById("tokenPopup").style.display = "flex";
-    }
+<!-- JAVASCRIPT -->
+<script>
+  function showTokenPopup() {
+    document.getElementById("tokenPopup").style.display = "flex";
+  }
 
-    function closeTokenPopup() {
-      document.getElementById("tokenPopup").style.display = "none";
-    }
+  function closeTokenPopup() {
+    document.getElementById("tokenPopup").style.display = "none";
+  }
 
-    function showTokenIban() {
-      const select = document.getElementById("tokenSelect");
-      const iban = document.getElementById("tokenIban");
-      iban.style.display = select.value ? "block" : "none";
-    }
+  function showTokenIban() {
+    const select = document.getElementById("tokenSelect");
+    const iban = document.getElementById("tokenIban");
+    iban.style.display = select.value ? "block" : "none";
+  }
 
-    function copyIban() {
-      const iban = document.getElementById("ibanText").textContent;
-      navigator.clipboard.writeText(iban).then(() => {
-        alert("IBAN kopyalandı!");
-      });
-    }
+  function copyIban() {
+    const iban = document.getElementById("ibanText").textContent;
+    navigator.clipboard.writeText(iban).then(() => {
+      alert("IBAN kopyalandı!");
+    });
+  }
 
-    function showGoldPopup() {
-  document.getElementById("goldPopup").style.display = "flex";
-}
+  function showGoldPopup() {
+    document.getElementById("goldPopup").style.display = "flex";
+  }
 
-function closeGoldPopup() {
-  document.getElementById("goldPopup").style.display = "none";
-}
+  function closeGoldPopup() {
+    document.getElementById("goldPopup").style.display = "none";
+  }
 
-function showGoldIban() {
-  const select = document.getElementById("goldSelect");
-  const iban = document.getElementById("goldIban");
-  iban.style.display = select.value ? "block" : "none";
-}
+  function showGoldIban() {
+    const select = document.getElementById("goldSelect");
+    const iban = document.getElementById("goldIban");
+    iban.style.display = select.value ? "block" : "none";
+  }
 
-function copyGoldIban() {
-  const iban = document.getElementById("goldIbanText").textContent;
-  navigator.clipboard.writeText(iban).then(() => {
-    alert("IBAN kopyalandı!");
-  });
-}
-
-  </script>
-</body>
-</html>
+  function copyGoldIban() {
+    const iban = document.getElementById("goldIbanText").textContent;
+    navigator.clipboard.writeText(iban).then(() => {
+      alert("IBAN kopyalandı!");
+    });
+  }
+</script>
