@@ -460,6 +460,13 @@ function showGiftPopup() {
 function closeGiftPopup() {
   document.getElementById("giftPopup").style.display = "none";
 }
+function showGoldIban() {
+  document.getElementById("goldIban").style.display = "block";
+}
+function showGiftIban() {
+  document.getElementById("giftIban").style.display = "block";
+}
+
 
     window.logout = logout;
     window.goTo = goTo;
@@ -471,6 +478,9 @@ function closeGiftPopup() {
     window.closeGoldPopup = closeGoldPopup;
     window.showGiftPopup = showGiftPopup;
     window.closeGiftPopup = closeGiftPopup;
+    window.showGoldIban = showGoldIban;
+    window.showGiftIban = showGiftIban;
+
 
   </script>
 
@@ -479,18 +489,18 @@ function closeGiftPopup() {
   <div style="max-width:500px; margin:100px auto; background:#222; padding:20px; border-radius:10px;">
     <h2>Premium Üye Olmalısınız</h2>
     <p>Mesaj gönderebilmek için aşağıdan bir paket seçiniz:</p>
-    <select id="goldSelect" onchange="showGoldIban()">
-      <option value="">Paket Seçin</option>
-      <option value="1ay">1 Ay – 100 TL</option>
-      <option value="3ay">3 Ay – 250 TL</option>
-      <option value="6ay">6 Ay – 500 TL</option>
-      <option value="12ay">1 Yıl – 800 TL</option>
-    </select>
+
+    <button onclick="showGoldIban()" style="margin: 5px; padding: 10px;">1 Ay – 100 TL</button>
+    <button onclick="showGoldIban()" style="margin: 5px; padding: 10px;">3 Ay – 250 TL</button>
+    <button onclick="showGoldIban()" style="margin: 5px; padding: 10px;">6 Ay – 500 TL</button>
+    <button onclick="showGoldIban()" style="margin: 5px; padding: 10px;">1 Yıl – 800 TL</button>
+
     <div id="goldIban" style="display:none; margin-top:10px;">
       <p><strong>IBAN:</strong> TR91 0001 0040 0452 2812 1550 07</p>
       <p><strong>Alıcı:</strong> NEJLA KOÇ</p>
       <p><strong>Banka:</strong> Ziraat Bankası</p>
     </div>
+
     <button onclick="closeGoldPopup()" style="margin-top:15px;">Kapat</button>
   </div>
 </div>
@@ -500,17 +510,18 @@ function closeGiftPopup() {
   <div style="max-width:500px; margin:100px auto; background:#222; padding:20px; border-radius:10px;">
     <h2>Yeterli Jetonunuz Yok</h2>
     <p>Hediye gönderebilmek için jeton paketi seçiniz:</p>
-    <select id="giftSelect" onchange="showGiftIban()">
-      <option value="">Paket Seçin</option>
-      <option value="50">50 Jeton – 50 TL</option>
-      <option value="100">100 Jeton – 75 TL</option>
-      <option value="250">250 Jeton – 150 TL</option>
-    </select>
+
+    <button onclick="showGiftIban()" style="margin: 5px; padding: 10px;">50 Jeton – 50 TL</button>
+    <button onclick="showGiftIban()" style="margin: 5px; padding: 10px;">100 Jeton – 75 TL</button>
+    <button onclick="showGiftIban()" style="margin: 5px; padding: 10px;">250 Jeton – 150 TL</button>
+
     <div id="giftIban" style="display:none; margin-top:10px;">
       <p><strong>IBAN:</strong> TR91 0001 0040 0452 2812 1550 07</p>
       <p><strong>Alıcı:</strong> NEJLA KOÇ</p>
       <p><strong>Banka:</strong> Ziraat Bankası</p>
     </div>
+
     <button onclick="closeGiftPopup()" style="margin-top:15px;">Kapat</button>
   </div>
 </div>
+
