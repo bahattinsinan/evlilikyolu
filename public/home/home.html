@@ -196,16 +196,23 @@
   cursor: pointer;
 }
 
-    @media (max-width: 600px) {
-      .user-card {
-        width: 33%;
-      }
+   @media (max-width: 600px) {
+  .online-users {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
 
-      .help-panel {
-        width: 90%;
-        right: 5%;
-      }
-    }
+  .user-card {
+    flex: 0 0 auto;
+    margin-right: 10px;
+  }
+
+  .help-panel {
+    width: 90%;
+    right: 5%;
+  }
+}
+
   </style>
 </head>
 <body>
