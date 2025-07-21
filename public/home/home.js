@@ -157,7 +157,11 @@ window.showGiftIban = function () {
 
 // Sayfa geçiş
 window.goTo = function (target) {
-  location.href = `/home/${target}.html`;
+  if (target === "home") location.href = "/home/home.html";
+  else if (target === "profile") location.href = "/profile/profile.html";
+  else if (target === "messages") location.href = "/messages/messages.html";
+  else if (target === "notifications") location.href = "/notifications/notifications.html";
+  else if (target === "gifts") location.href = "/gifts/gifts.html";
 };
 
 window.logout = function () {
