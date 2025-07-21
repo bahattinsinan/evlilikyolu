@@ -93,8 +93,8 @@
 
     <div class="bio-box">Henüz bir tanıtım yazısı eklenmedi.</div>
 
-    <div class="action-buttons">
-      <button onclick="location.href='/tokens.html'">💰 Jeton Al</button>
+    <div class="action-buttons">      
+      <button onclick="showTokenPopup()">💰 Jeton Al</button>
       <button onclick="location.href='/upgrade.html'">🌟 Pro Üye Ol</button>
       <button onclick="location.href='/visitors.html'">👀 Profilimi Ziyaret Edenler</button>
       <button onclick="location.href='/messages.html'">💌 Gelen Mesajlar</button>
@@ -102,5 +102,52 @@
       <button onclick="location.href='/privacy.html'">🔒 Gizlilik Ayarları</button>
     </div>
   </div>
+
+  <!-- POPUP HTML BURADA -->
+  <div id="tokenPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; z-index:9999;">
+    <div style="background:#fff; padding:20px; border-radius:10px; max-width:300px; width:90%;">
+      <h3>Jeton Paketi Seç</h3>
+      <select id="tokenSelect" onchange="showTokenIban()" style="width:100%; padding:10px; margin-bottom:10px;">
+        <option value="">Paket Seçin</option>
+        <option value="50">50 Jeton – 50 TL</option>
+        <option value="100">100 Jeton – 75 TL</option>
+        <option value="250">250 Jeton – 150 TL</option>
+        <option value="500">500 Jeton – 250 TL</option>
+        <option value="1000">1000 Jeton – 400 TL</option>
+      </select>
+
+      <div id="tokenIban" style="display:none;">
+        <p><strong>Ödeme Bilgileri:</strong></p>
+        <p id="ibanText">TR91 0001 0040 0452 2812 1550 07 - NEJLA KOÇ - Ziraat Bankası</p>
+        <button onclick="copyIban()" style="background:#1565c0; color:#fff; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;">IBAN'ı Kopyala</button>
+      </div>
+
+      <button onclick="closeTokenPopup()" style="margin-top:10px; background:#aaa; color:white; border:none; padding:8px 12px; border-radius:6px;">Kapat</button>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT -->
+  <script>
+    function showTokenPopup() {
+      document.getElementById("tokenPopup").style.display = "flex";
+    }
+
+    function closeTokenPopup() {
+      document.getElementById("tokenPopup").style.display = "none";
+    }
+
+    function showTokenIban() {
+      const select = document.getElementById("tokenSelect");
+      const iban = document.getElementById("tokenIban");
+      iban.style.display = select.value ? "block" : "none";
+    }
+
+    function copyIban() {
+      const iban = document.getElementById("ibanText").textContent;
+      navigator.clipboard.writeText(iban).then(() => {
+        alert("IBAN kopyalandı!");
+      });
+    }
+  </script>
 </body>
 </html>
