@@ -115,6 +115,80 @@
   </style>
 </head>
 <body>
+  <div id="profileRoot"></div>
+
+  <!-- popup'lar buraya yapışacak (önceki verdiğin içerikler zaten doğru) -->
+
+  <script type="module">
+    import { app } from "/firebaseConfig.js";
+    import {
+      getFirestore, doc, onSnapshot
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const db = getFirestore(app);
+    const params = new URLSearchParams(window.location.search);
+    const userId = params.get("id");
+
+    const profileContainer = document.createElement("div");
+    profileContainer.className = "profile-container";
+    profileContainer.innerHTML = `
+      <img id="profileImage" src="/images/default-avatar.png" alt="Profil Resmi">
+      <h2 id="displayName">Yükleniyor...</h2>
+      <p>Yaş: <span id="age">-</span></p>
+      <p>Şehir: <span id="city">-</span></p>
+      <p>Cinsiyet: <span id="gender">-</span></p>
+      <p>Aradığı: <span id="lookingFor">-</span></p>
+      <p>Hakkında: <span id="bio">-</span></p>
+      <div class="action-buttons">
+        <button id="msgBtn" class="blue-btn">Mesaj Gönder</button>
+        <button id="giftBtn" class="blue-btn">Hediye Gönder</button>
+        <button id="callBtn" class="blue-btn">Görüntülü Ara</button>
+      </div>
+    `;
+    document.getElementById("profileRoot").appendChild(profileContainer);
+
+    if (userId) {
+      const userRef = doc(db, "users", userId);
+      onSnapshot(userRef, (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          document.getElementById("displayName").textContent = data.displayName || "-";
+          document.getElementById("age").textContent = data.age || "-";
+          document.getElementById("city").textContent = data.city || "-";
+          document.getElementById("gender").textContent = data.gender || "-";
+          document.getElementById("lookingFor").textContent = data.lookingFor || "-";
+          document.getElementById("bio").textContent = data.bio || "-";
+          if (data.photoURL) {
+            document.getElementById("profileImage").src = data.photoURL;
+          }
+
+          if (data.gender === "Kadın") {
+            document.body.style.backgroundColor = "#ffe6f0";
+            document.querySelectorAll(".blue-btn").forEach(btn => {
+              btn.classList.remove("blue-btn");
+              btn.classList.add("pink-btn");
+            });
+          } else {
+            document.body.style.backgroundColor = "#e6f0ff";
+          }
+        }
+      });
+    }
+
+    document.addEventListener("click", (e) => {
+      if (e.target.id === "msgBtn") {
+        document.getElementById("premiumPopup")?.style.display = "flex";
+      }
+      if (e.target.id === "giftBtn") {
+        document.getElementById("jetonPopup")?.style.display = "flex";
+      }
+      if (e.target.id === "callBtn") {
+        document.getElementById("goldPopup")?.style.display = "flex";
+      }
+    });
+  </script>
+</body>
+</html>
 
 <!-- Premium Popup -->
 <div class="popup" id="premiumPopup">
