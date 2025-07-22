@@ -306,18 +306,37 @@ onAuthStateChanged(auth, (user) => {
     // 🔴 Kullanıcı giriş yaptıysa online olarak Firestore'a ekle
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const userDoc = await getDocs(query(collection(db, "users"), where("uid", "==", user.uid)));
-        const userData = userDoc.docs[0]?.data() || {};
+      const usersRef = collection(db, "users");
+      const userQuery = query(usersRef, where("uid", "==", user.uid));
+      const userDocSnap = await getDocs(userQuery);
 
-        await setDoc(doc(db, "onlineUsers", user.uid), {
-          uid: user.uid,
-          displayName: userData.displayName || "Üye",
-          profileImage: userData.profileImage || "/images/default-avatar.png",
-          age: userData.age || "",
-          timestamp: serverTimestamp()
-        });
-      }
-    });
+      if (userDocSnap.empty) {
+  await addDoc(usersRef, {
+    uid: user.uid,
+    displayName: user.displayName || "Google Üyesi",
+    profileImage: user.photoURL || "/images/default-avatar.png",
+    email: user.email,
+    age: "",
+    city: "",
+    gender: "",
+    membership: "free",
+    createdAt: serverTimestamp()
+  });
+}
+
+const userData = userDocSnap.docs[0]?.data() || {
+  displayName: user.displayName || "Google Üyesi",
+  profileImage: user.photoURL || "/images/default-avatar.png",
+  age: ""
+};
+
+await setDoc(doc(db, "onlineUsers", user.uid), {
+  uid: user.uid,
+  displayName: userData.displayName,
+  profileImage: userData.profileImage,
+  age: userData.age,
+  timestamp: serverTimestamp()
+});
 
     onSnapshot(collection(db, "onlineUsers"), (snapshot) => {
   const listDiv = document.getElementById("onlineUsers");
@@ -557,5 +576,3 @@ function showGiftIban() {
     <button onclick="sendHelpMessage()">Gönder</button>
   </div>
 </div>
-
-
