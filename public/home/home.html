@@ -356,43 +356,37 @@ onAuthStateChanged(auth, (user) => {
     const threeDaysAgo = new Date(now.getTime() - 72 * 60 * 60 * 1000);
 
     onSnapshot(shareQuery, (snapshot) => {
-      sharedPostsDiv.innerHTML = "";
-      snapshot.forEach((docSnap) => {
-        const post = docSnap.data();
-        const createdAt = post.createdAt?.toDate?.();
+  sharedPostsDiv.innerHTML = "";
+  snapshot.forEach((docSnap) => {
+    const post = docSnap.data();
 
-        if (createdAt && createdAt < threeDaysAgo) {
-          deleteDoc(doc(db, "shares", docSnap.id));
-          return;
-        }
-
-        const postDiv = document.createElement("div");
-        postDiv.style.background = "rgba(0,0,0,0.6)";
-        postDiv.style.padding = "15px";
-        postDiv.style.borderRadius = "10px";
-        postDiv.style.maxWidth = "400px";
-        postDiv.style.width = "90%";
-        postDiv.style.color = "white";
-        postDiv.style.textAlign = "left";
-        postDiv.innerHTML = `
-  <a href="/user/user.html?uid=${post.uid}" style="color:white; text-decoration:none;">
-    <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
-      <img src="${post.profileImage}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
-      <div>
-        <strong>${post.displayName}</strong><br/>
-        <small>${post.age ? post.age + " yaş" : ""}</small>
+    const postDiv = document.createElement("div");
+    postDiv.style.background = "rgba(0,0,0,0.6)";
+    postDiv.style.padding = "15px";
+    postDiv.style.borderRadius = "10px";
+    postDiv.style.maxWidth = "400px";
+    postDiv.style.width = "90%";
+    postDiv.style.color = "white";
+    postDiv.style.textAlign = "left";
+    postDiv.innerHTML = `
+      <a href="/user/user.html?uid=${post.uid}" style="color:white; text-decoration:none;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+          <img src="${post.profileImage}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+          <div>
+            <strong>${post.displayName}</strong><br/>
+            <small>${post.age ? post.age + " yaş" : ""}</small>
+          </div>
+        </div>
+      </a>
+      <p style="margin:10px 0;">${post.text}</p>
+      <div style="display:flex; justify-content:space-around;">
+        <button onclick="showGoldPopup()" style="background: #ff69b4; color:white; border:none; border-radius:8px; padding:5px 10px;">Mesaj Gönder</button>
+        <button onclick="showGiftPopup()" style="background: gold; color:black; border:none; border-radius:8px; padding:5px 10px;">Hediye Gönder</button>
       </div>
-    </div>
-  </a>
-  <p style="margin:10px 0;">${post.text}</p>
-  <div style="display:flex; justify-content:space-around;">
-    <button onclick="showGoldPopup()" style="background: #ff69b4; color:white; border:none; border-radius:8px; padding:5px 10px;">Mesaj Gönder</button>
-    <button onclick="showGiftPopup()" style="background: gold; color:black; border:none; border-radius:8px; padding:5px 10px;">Hediye Gönder</button>
-  </div>
-`;
-        sharedPostsDiv.appendChild(postDiv);
-      });
-    });
+    `;
+    sharedPostsDiv.appendChild(postDiv);
+  });
+});
 
     async function submitShare() {
       const user = auth.currentUser;
@@ -565,4 +559,3 @@ function showGiftIban() {
     <button onclick="sendHelpMessage()">Gönder</button>
   </div>
 </div>
-
