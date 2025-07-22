@@ -278,43 +278,40 @@
       navigator.clipboard.writeText(document.getElementById("videoIbanText").textContent).then(() => alert("IBAN kopyalandı!"));
     }
   </script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("iconEdit")?.addEventListener("click", () => {
+      const bioBox = document.querySelector(".bio-box");
+      if (!bioBox) return;
 
-  <script type="module">
-  document.addEventListener("DOMContentLoaded", async () => {
-    const { getFirestore, doc, getDoc, updateDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
-    const { app } = await import("/firebaseConfig.js");
+      const currentText = bioBox.textContent.trim();
+      const newText = prompt("Kendinizden kısaca bahsedin:", currentText);
 
-    const db = getFirestore(app);
-    const user = JSON.parse(localStorage.getItem("user"));
+      if (newText === null) return; // İptal tuşuna bastıysa işlem yapma
 
-    const forbiddenWords = ["siktir", "amk", "orospu", "piç", "salak", "aptal", "yarrak", "anan", "avradın", "sikik"];
-
-    function containsForbiddenWords(text) {
-      return forbiddenWords.some(word => text.toLowerCase().includes(word));
-    }
-
-    window.saveBio = async function (el) {
-      const text = el.textContent.trim();
-      if (containsForbiddenWords(text)) {
+      const forbiddenWords = ["siktir", "amk", "orospu", "piç", "salak", "aptal", "yarrak", "anan", "avradın", "sikik"];
+      const hasBadWords = forbiddenWords.some(word => newText.toLowerCase().includes(word));
+      if (hasBadWords) {
         alert("Uygunsuz kelimeler tespit edildi.");
-        el.textContent = "";
         return;
       }
-      if (user) {
-        const ref = doc(db, "users", user.uid);
-        await updateDoc(ref, { bio: text });
-      }
-    };
 
-    if (user) {
-      const ref = doc(db, "users", user.uid);
-      const snap = await getDoc(ref);
-      if (snap.exists()) {
-        const data = snap.data();
-        const el = document.querySelector(".bio-box");
-        if (data.bio && el) el.textContent = data.bio;
-      }
-    }
+      import("/firebaseConfig.js").then(({ app }) => {
+        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js").then(firestore => {
+          const db = firestore.getFirestore(app);
+          const user = JSON.parse(localStorage.getItem("user"));
+          if (!user) return;
+
+          const userRef = firestore.doc(db, "users", user.uid);
+          firestore.updateDoc(userRef, {
+            bio: newText
+          }).then(() => {
+            bioBox.textContent = newText;
+            alert("Tanıtım yazınız kaydedildi.");
+          });
+        });
+      });
+    });
   });
 </script>
  
