@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ziyaretçi Profili</title>
   <style>
     body {
@@ -113,11 +113,10 @@
       width: 100%;
     }
   </style>
+
   <script type="module">
     import { app } from "/firebaseConfig.js";
-    import {
-      getFirestore, doc, onSnapshot
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const db = getFirestore(app);
     const params = new URLSearchParams(window.location.search);
@@ -156,7 +155,7 @@
             document.getElementById("profileImage").src = data.photoURL;
           }
 
-          // arka plan ve buton rengi
+          // cinsiyete göre renk
           if (data.gender === "Kadın") {
             document.body.style.backgroundColor = "#ffe6f0";
             document.querySelectorAll(".blue-btn").forEach(btn => {
@@ -171,16 +170,16 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("msgBtn").onclick = () => {
-    document.getElementById("premiumPopup").style.display = "flex";
-  }
-  document.getElementById("giftBtn").onclick = () => {
-    document.getElementById("jetonPopup").style.display = "flex";
-  }
-  document.getElementById("callBtn").onclick = () => {
-    document.getElementById("goldPopup").style.display = "flex";
-  }
-});
+      document.getElementById("msgBtn").onclick = () => {
+        document.getElementById("premiumPopup").style.display = "flex";
+      };
+      document.getElementById("giftBtn").onclick = () => {
+        document.getElementById("jetonPopup").style.display = "flex";
+      };
+      document.getElementById("callBtn").onclick = () => {
+        document.getElementById("goldPopup").style.display = "flex";
+      };
+    });
   </script>
 </head>
 <body>
@@ -189,15 +188,15 @@
 <div class="popup" id="premiumPopup">
   <div class="popup-content">
     <h3>Premium Üyelik Gerekli (Mesaj Gönder)</h3>
-    <button class="option-btn" onclick="showIban('1 Ay – 300 TL')">1 Ay – 300 TL</button>
-    <button class="option-btn" onclick="showIban('3 Ay – 500 TL')">3 Ay – 500 TL</button>
-    <button class="option-btn" onclick="showIban('6 Ay – 800 TL')">6 Ay – 800 TL</button>
-    <button class="option-btn" onclick="showIban('1 Yıl – 1000 TL')">1 Yıl – 1000 TL</button>
+    <button class="option-btn" onclick="showIban()">1 Ay – 300 TL</button>
+    <button class="option-btn" onclick="showIban()">3 Ay – 500 TL</button>
+    <button class="option-btn" onclick="showIban()">6 Ay – 800 TL</button>
+    <button class="option-btn" onclick="showIban()">1 Yıl – 1000 TL</button>
     <div class="iban-box" id="premiumIban" style="display:none">
       <p><strong>IBAN:</strong> TR91 0001 0040 0452 2812 1550 07</p>
       <p><strong>Alıcı:</strong> NEJLA KOÇ</p>
       <p><strong>Banka:</strong> Ziraat Bankası</p>
-      <button class="copy-btn" onclick="copyIban('TR91 0001 0040 0452 2812 1550 07')">IBAN Kopyala</button>
+      <button class="copy-btn" onclick="copyIban()">IBAN Kopyala</button>
     </div>
     <button class="close-btn" onclick="closePopup('premiumPopup')">Kapat</button>
   </div>
@@ -207,15 +206,15 @@
 <div class="popup" id="goldPopup">
   <div class="popup-content">
     <h3>Gold Üyelik Gerekli (Görüntülü Ara)</h3>
-    <button class="option-btn" onclick="showGoldIban('1 Ay – 300 TL')">1 Ay – 300 TL</button>
-    <button class="option-btn" onclick="showGoldIban('3 Ay – 500 TL')">3 Ay – 500 TL</button>
-    <button class="option-btn" onclick="showGoldIban('6 Ay – 800 TL')">6 Ay – 800 TL</button>
-    <button class="option-btn" onclick="showGoldIban('1 Yıl – 1000 TL')">1 Yıl – 1000 TL</button>
+    <button class="option-btn" onclick="showGoldIban()">1 Ay – 300 TL</button>
+    <button class="option-btn" onclick="showGoldIban()">3 Ay – 500 TL</button>
+    <button class="option-btn" onclick="showGoldIban()">6 Ay – 800 TL</button>
+    <button class="option-btn" onclick="showGoldIban()">1 Yıl – 1000 TL</button>
     <div class="iban-box" id="goldIban" style="display:none">
       <p><strong>IBAN:</strong> TR91 0001 0040 0452 2812 1550 07</p>
       <p><strong>Alıcı:</strong> NEJLA KOÇ</p>
       <p><strong>Banka:</strong> Ziraat Bankası</p>
-      <button class="copy-btn" onclick="copyIban('TR91 0001 0040 0452 2812 1550 07')">IBAN Kopyala</button>
+      <button class="copy-btn" onclick="copyIban()">IBAN Kopyala</button>
     </div>
     <button class="close-btn" onclick="closePopup('goldPopup')">Kapat</button>
   </div>
@@ -225,34 +224,34 @@
 <div class="popup" id="jetonPopup">
   <div class="popup-content">
     <h3>Jeton Satın Al (Hediye Gönder)</h3>
-    <button class="option-btn" onclick="showJetonIban('50 Jeton – 50 TL')">50 Jeton – 50 TL</button>
-    <button class="option-btn" onclick="showJetonIban('100 Jeton – 75 TL')">100 Jeton – 75 TL</button>
-    <button class="option-btn" onclick="showJetonIban('250 Jeton – 150 TL')">250 Jeton – 150 TL</button>
+    <button class="option-btn" onclick="showJetonIban()">50 Jeton – 50 TL</button>
+    <button class="option-btn" onclick="showJetonIban()">100 Jeton – 75 TL</button>
+    <button class="option-btn" onclick="showJetonIban()">250 Jeton – 150 TL</button>
     <div class="iban-box" id="jetonIban" style="display:none">
       <p><strong>IBAN:</strong> TR91 0001 0040 0452 2812 1550 07</p>
       <p><strong>Alıcı:</strong> NEJLA KOÇ</p>
       <p><strong>Banka:</strong> Ziraat Bankası</p>
-      <button class="copy-btn" onclick="copyIban('TR91 0001 0040 0452 2812 1550 07')">IBAN Kopyala</button>
+      <button class="copy-btn" onclick="copyIban()">IBAN Kopyala</button>
     </div>
     <button class="close-btn" onclick="closePopup('jetonPopup')">Kapat</button>
   </div>
 </div>
 
 <script>
-  function showIban(option) {
+  function showIban() {
     document.getElementById("premiumIban").style.display = "block";
   }
-  function showGoldIban(option) {
+  function showGoldIban() {
     document.getElementById("goldIban").style.display = "block";
   }
-  function showJetonIban(option) {
+  function showJetonIban() {
     document.getElementById("jetonIban").style.display = "block";
   }
   function closePopup(id) {
     document.getElementById(id).style.display = "none";
   }
-  function copyIban(iban) {
-    navigator.clipboard.writeText(iban);
+  function copyIban() {
+    navigator.clipboard.writeText("TR91 0001 0040 0452 2812 1550 07");
     alert("IBAN kopyalandı.");
   }
 </script>
