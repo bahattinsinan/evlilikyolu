@@ -201,7 +201,7 @@
     <input type="file" id="photoUploadInput" style="display:none" onchange="uploadProfilePhoto(event)">
   <script type="module">
     import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-    
+    import { getFirestore, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
     import { app } from "/firebaseConfig.js";
 
     const storage = getStorage(app);
@@ -252,46 +252,23 @@
       location.reload();
     };
   </script>
+  window.showGoldPopup = function () {
+  document.getElementById("goldPopup").style.display = "flex";
+};
+window.closeGoldPopup = function () {
+  document.getElementById("goldPopup").style.display = "none";
+};
+window.showGoldIban = function () {
+  const select = document.getElementById("goldSelect");
+  document.getElementById("goldIban").style.display = select.value ? "block" : "none";
+};
+window.copyGoldIban = function () {
+  navigator.clipboard.writeText(document.getElementById("goldIbanText").textContent)
+    .then(() => alert("IBAN kopyalandı!"));
+};
 
   <script>
-    function showTokenPopup() {
-      document.getElementById("tokenPopup").style.display = "flex";
-    }
-    function closeTokenPopup() {
-      document.getElementById("tokenPopup").style.display = "none";
-    }
-    function showTokenIban() {
-      const select = document.getElementById("tokenSelect");
-      document.getElementById("tokenIban").style.display = select.value ? "block" : "none";
-    }
-    function copyIban() {
-      navigator.clipboard.writeText(document.getElementById("ibanText").textContent).then(() => alert("IBAN kopyalandı!"));
-    }
-
-    function showGoldPopup() {
-      document.getElementById("goldPopup").style.display = "flex";
-    }
-    function closeGoldPopup() {
-      document.getElementById("goldPopup").style.display = "none";
-    }
-    function showGoldIban() {
-      const select = document.getElementById("goldSelect");
-      document.getElementById("goldIban").style.display = select.value ? "block" : "none";
-    }
-    function copyGoldIban() {
-      navigator.clipboard.writeText(document.getElementById("goldIbanText").textContent).then(() => alert("IBAN kopyalandı!"));
-    }
-
-    function showVideoPopup() {
-      document.getElementById("videoPopup").style.display = "flex";
-    }
-    function closeVideoPopup() {
-      document.getElementById("videoPopup").style.display = "none";
-    }
-    function showVideoIban() {
-      const select = document.getElementById("videoSelect");
-      document.getElementById("videoIban").style.display = select.value ? "block" : "none";
-    }
+    
     function copyVideoIban() {
       navigator.clipboard.writeText(document.getElementById("videoIbanText").textContent).then(() => alert("IBAN kopyalandı!"));
     }
