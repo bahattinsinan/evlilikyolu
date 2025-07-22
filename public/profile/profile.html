@@ -4,6 +4,29 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Profil</title>
+  <script type="module">
+    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { app } from "/firebaseConfig.js";
+
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    window.logout = async function () {
+      const user = auth.currentUser;
+      if (user) {
+        const uid = user.uid;
+        try {
+          await deleteDoc(doc(db, "onlineUsers", uid));
+          await signOut(auth);
+          location.href = "/login/login.html";
+        } catch (error) {
+          console.error("Çıkış sırasında hata:", error);
+          alert("Çıkış yapılırken bir hata oluştu.");
+        }
+      }
+    };
+  </script>
   <style>
     body {
       margin: 0;
@@ -65,6 +88,7 @@
     body.female {
       background-color: #ffe0f0;
     }
+
     body.female .action-buttons button {
       background-color: #d81b60;
     }
@@ -72,6 +96,7 @@
     body.male {
       background-color: #e0f7ff;
     }
+
     body.male .action-buttons button {
       background-color: #1565c0;
     }
@@ -105,138 +130,119 @@
   </div>
 
   <!-- PRO ÜYELİK POPUP -->
-<div id="goldPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; z-index:9999;">
-  <div style="background:#8B0000; color:white; padding:20px; border-radius:10px; max-width:320px; width:90%; position:relative;">
-    <span onclick="closeGoldPopup()" style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:20px;">✖</span>
-    <h3 style="text-align:center; font-weight:bold; font-size:22px;">🌟 Pro Üyelik Seç</h3>
-    <select id="goldSelect" onchange="showGoldIban()" style="width:100%; padding:10px; margin:15px 0; border-radius:6px; font-weight:bold; font-size:16px;">
-      <option value="">Süre Seçin</option>
-      <option value="1">1 Ay – 100 TL</option>
-      <option value="3">3 Ay – 250 TL</option>
-      <option value="6">6 Ay – 500 TL</option>
-      <option value="12">1 Yıl – 800 TL</option>
-    </select>
-    <div id="goldIban" style="display:none; margin-top:10px;">
-      <p><strong>Ödeme Bilgileri:</strong></p>
-      <p id="goldIbanText" style="font-weight:bold;">TR91 0001 0040 0452 2812 1550 07<br>NEJLA KOÇ - Ziraat Bankası</p>
-      <button onclick="copyGoldIban()" style="background:white; color:#8B0000; border:none; padding:10px; border-radius:6px; cursor:pointer; width:100%; margin-top:10px; font-weight:bold;">IBAN'ı Kopyala</button>
+  <div id="goldPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; z-index:9999;">
+    <div style="background:#8B0000; color:white; padding:20px; border-radius:10px; max-width:320px; width:90%; position:relative;">
+      <span onclick="closeGoldPopup()" style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:20px;">✖</span>
+      <h3 style="text-align:center; font-weight:bold; font-size:22px;">🌟 Pro Üyelik Seç</h3>
+      <select id="goldSelect" onchange="showGoldIban()" style="width:100%; padding:10px; margin:15px 0; border-radius:6px; font-weight:bold; font-size:16px;">
+        <option value="">Süre Seçin</option>
+        <option value="1">1 Ay – 100 TL</option>
+        <option value="3">3 Ay – 250 TL</option>
+        <option value="6">6 Ay – 500 TL</option>
+        <option value="12">1 Yıl – 800 TL</option>
+      </select>
+      <div id="goldIban" style="display:none; margin-top:10px;">
+        <p><strong>Ödeme Bilgileri:</strong></p>
+        <p id="goldIbanText" style="font-weight:bold;">TR91 0001 0040 0452 2812 1550 07<br>NEJLA KOÇ - Ziraat Bankası</p>
+        <button onclick="copyGoldIban()" style="background:white; color:#8B0000; border:none; padding:10px; border-radius:6px; cursor:pointer; width:100%; margin-top:10px; font-weight:bold;">IBAN'ı Kopyala</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- JETON POPUP -->
-<div id="tokenPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; z-index:9999;">
-  <div style="background:#8B0000; color:white; padding:20px; border-radius:10px; max-width:320px; width:90%; position:relative;">
-    <span onclick="closeTokenPopup()" style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:20px;">✖</span>
-    <h3 style="text-align:center; font-weight:bold; font-size:22px;">💰 Jeton Paketi Seç</h3>
-    <select id="tokenSelect" onchange="showTokenIban()" style="width:100%; padding:10px; margin:15px 0; border-radius:6px; font-weight:bold; font-size:16px;">
-      <option value="">Paket Seçin</option>
-      <option value="50">50 Jeton – 50 TL</option>
-      <option value="100">100 Jeton – 75 TL</option>
-      <option value="250">250 Jeton – 150 TL</option>
-      <option value="500">500 Jeton – 250 TL</option>
-      <option value="1000">1000 Jeton – 400 TL</option>
-    </select>
-    <div id="tokenIban" style="display:none; margin-top:10px;">
-      <p><strong>Ödeme Bilgileri:</strong></p>
-      <p id="ibanText" style="font-weight:bold;">TR91 0001 0040 0452 2812 1550 07<br>NEJLA KOÇ - Ziraat Bankası</p>
-      <button onclick="copyIban()" style="background:white; color:#8B0000; border:none; padding:10px; border-radius:6px; cursor:pointer; width:100%; margin-top:10px; font-weight:bold;">IBAN'ı Kopyala</button>
+  <!-- JETON POPUP -->
+  <div id="tokenPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; z-index:9999;">
+    <div style="background:#8B0000; color:white; padding:20px; border-radius:10px; max-width:320px; width:90%; position:relative;">
+      <span onclick="closeTokenPopup()" style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:20px;">✖</span>
+      <h3 style="text-align:center; font-weight:bold; font-size:22px;">💰 Jeton Paketi Seç</h3>
+      <select id="tokenSelect" onchange="showTokenIban()" style="width:100%; padding:10px; margin:15px 0; border-radius:6px; font-weight:bold; font-size:16px;">
+        <option value="">Paket Seçin</option>
+        <option value="50">50 Jeton – 50 TL</option>
+        <option value="100">100 Jeton – 75 TL</option>
+        <option value="250">250 Jeton – 150 TL</option>
+        <option value="500">500 Jeton – 250 TL</option>
+        <option value="1000">1000 Jeton – 400 TL</option>
+      </select>
+      <div id="tokenIban" style="display:none; margin-top:10px;">
+        <p><strong>Ödeme Bilgileri:</strong></p>
+        <p id="ibanText" style="font-weight:bold;">TR91 0001 0040 0452 2812 1550 07<br>NEJLA KOÇ - Ziraat Bankası</p>
+        <button onclick="copyIban()" style="background:white; color:#8B0000; border:none; padding:10px; border-radius:6px; cursor:pointer; width:100%; margin-top:10px; font-weight:bold;">IBAN'ı Kopyala</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- GÖRÜNTÜLÜ GÖRÜŞME POPUP -->
-<div id="videoPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; z-index:9999;">
-  <div style="background:#8B0000; color:white; padding:20px; border-radius:10px; max-width:320px; width:90%; position:relative;">
-    <span onclick="closeVideoPopup()" style="position:absolute; top:5px; right:10px; cursor:pointer; font-size:18px;">❌</span>
-    <h3 style="text-align:center;">📹 Görüntülü Görüşme Paketi gold üyelik</h3>
-    <select id="videoSelect" onchange="showVideoIban()" style="width:100%; padding:10px; margin:15px 0; border-radius:6px;">
-      <option value="">Süre Seçin</option>
-      <option value="1">1 Ay – 300 TL</option>
-      <option value="3">3 Ay – 500 TL</option>
-      <option value="6">6 Ay – 800 TL</option>
-      <option value="12">1 Yıl – 1500 TL</option>
-    </select>
-    <div id="videoIban" style="display:none; margin-top:10px;">
-      <p><strong>Ödeme Bilgileri:</strong></p>
-      <p id="videoIbanText">TR91 0001 0040 0452 2812 1550 07<br>NEJLA KOÇ - Ziraat Bankası</p>
-      <button onclick="copyVideoIban()" style="background:white; color:#8B0000; border:none; padding:10px; border-radius:6px; cursor:pointer; width:100%; margin-top:10px;">IBAN'ı Kopyala</button>
+  <!-- VIDEO POPUP -->
+  <div id="videoPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; z-index:9999;">
+    <div style="background:#8B0000; color:white; padding:20px; border-radius:10px; max-width:320px; width:90%; position:relative;">
+      <span onclick="closeVideoPopup()" style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:20px;">✖</span>
+      <h3 style="text-align:center;">📹 Görüntülü Görüşme Paketi</h3>
+      <select id="videoSelect" onchange="showVideoIban()" style="width:100%; padding:10px; margin:15px 0; border-radius:6px;">
+        <option value="">Süre Seçin</option>
+        <option value="1">1 Ay – 300 TL</option>
+        <option value="3">3 Ay – 500 TL</option>
+        <option value="6">6 Ay – 800 TL</option>
+        <option value="12">1 Yıl – 1500 TL</option>
+      </select>
+      <div id="videoIban" style="display:none; margin-top:10px;">
+        <p><strong>Ödeme Bilgileri:</strong></p>
+        <p id="videoIbanText">TR91 0001 0040 0452 2812 1550 07<br>NEJLA KOÇ - Ziraat Bankası</p>
+        <button onclick="copyVideoIban()" style="background:white; color:#8B0000; border:none; padding:10px; border-radius:6px; cursor:pointer; width:100%; margin-top:10px;">IBAN'ı Kopyala</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- JAVASCRIPT -->
-<script>
-  function showTokenPopup() {
-    document.getElementById("tokenPopup").style.display = "flex";
-  }
+  <!-- JS -->
+  <script>
+    function showTokenPopup() {
+      document.getElementById("tokenPopup").style.display = "flex";
+    }
+    function closeTokenPopup() {
+      document.getElementById("tokenPopup").style.display = "none";
+    }
+    function showTokenIban() {
+      const select = document.getElementById("tokenSelect");
+      document.getElementById("tokenIban").style.display = select.value ? "block" : "none";
+    }
+    function copyIban() {
+      navigator.clipboard.writeText(document.getElementById("ibanText").textContent).then(() => alert("IBAN kopyalandı!"));
+    }
 
-  function closeTokenPopup() {
-    document.getElementById("tokenPopup").style.display = "none";
-  }
+    function showGoldPopup() {
+      document.getElementById("goldPopup").style.display = "flex";
+    }
+    function closeGoldPopup() {
+      document.getElementById("goldPopup").style.display = "none";
+    }
+    function showGoldIban() {
+      const select = document.getElementById("goldSelect");
+      document.getElementById("goldIban").style.display = select.value ? "block" : "none";
+    }
+    function copyGoldIban() {
+      navigator.clipboard.writeText(document.getElementById("goldIbanText").textContent).then(() => alert("IBAN kopyalandı!"));
+    }
 
-  function showTokenIban() {
-    const select = document.getElementById("tokenSelect");
-    const iban = document.getElementById("tokenIban");
-    iban.style.display = select.value ? "block" : "none";
-  }
+    function showVideoPopup() {
+      document.getElementById("videoPopup").style.display = "flex";
+    }
+    function closeVideoPopup() {
+      document.getElementById("videoPopup").style.display = "none";
+    }
+    function showVideoIban() {
+      const select = document.getElementById("videoSelect");
+      document.getElementById("videoIban").style.display = select.value ? "block" : "none";
+    }
+    function copyVideoIban() {
+      navigator.clipboard.writeText(document.getElementById("videoIbanText").textContent).then(() => alert("IBAN kopyalandı!"));
+    }
+  </script>
 
-  function copyIban() {
-    const iban = document.getElementById("ibanText").textContent;
-    navigator.clipboard.writeText(iban).then(() => {
-      alert("IBAN kopyalandı!");
-    });
-  }
-
-  function showGoldPopup() {
-    document.getElementById("goldPopup").style.display = "flex";
-  }
-
-  function closeGoldPopup() {
-    document.getElementById("goldPopup").style.display = "none";
-  }
-
-  function showGoldIban() {
-    const select = document.getElementById("goldSelect");
-    const iban = document.getElementById("goldIban");
-    iban.style.display = select.value ? "block" : "none";
-  }
-
-  function copyGoldIban() {
-    const iban = document.getElementById("goldIbanText").textContent;
-    navigator.clipboard.writeText(iban).then(() => {
-      alert("IBAN kopyalandı!");
-    });
-  }
-
-  function showVideoPopup() {
-  document.getElementById("videoPopup").style.display = "flex";
-}
-
-function closeVideoPopup() {
-  document.getElementById("videoPopup").style.display = "none";
-}
-
-function showVideoIban() {
-  const select = document.getElementById("videoSelect");
-  const iban = document.getElementById("videoIban");
-  iban.style.display = select.value ? "block" : "none";
-}
-
-function copyVideoIban() {
-  const iban = document.getElementById("videoIbanText").textContent;
-  navigator.clipboard.writeText(iban).then(() => {
-    alert("IBAN kopyalandı!");
-  });
-}
-
-</script>
-<!-- ALT MENÜ -->
-<div style="position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 5px rgba(0,0,0,0.2); z-index: 9999;">
-  <button onclick="location.href='/home/home.html'" style="background: none; border: none; font-size: 24px;">🏠</button>
-  <button onclick="location.href='/messages.html'" style="background: none; border: none; font-size: 24px;">✉️</button>
-  <button onclick="showGiftPopup()" style="background: none; border: none; font-size: 24px;">🎁</button>
-  <button onclick="location.href='/notifications.html'" style="background: none; border: none; font-size: 24px;">🔔</button>
-  <button onclick="location.href='/profile/profile.html'" style="background: none; border: none; font-size: 24px;">👤</button>
-  <button onclick="logout()" style="background: none; border: none; font-size: 18px; color: red;">Çıkış</button>
-</div>
+  <!-- ALT MENÜ -->
+  <div style="position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 5px rgba(0,0,0,0.2); z-index: 9999;">
+    <button onclick="location.href='/home/home.html'" style="background: none; border: none; font-size: 24px;">🏠</button>
+    <button onclick="location.href='/messages.html'" style="background: none; border: none; font-size: 24px;">✉️</button>
+    <button onclick="showGiftPopup()" style="background: none; border: none; font-size: 24px;">🎁</button>
+    <button onclick="location.href='/notifications.html'" style="background: none; border: none; font-size: 24px;">🔔</button>
+    <button onclick="location.href='/profile/profile.html'" style="background: none; border: none; font-size: 24px;">👤</button>
+    <button onclick="logout()" style="background: none; border: none; font-size: 18px; color: red;">Çıkış</button>
+  </div>
+</body>
+</html>
