@@ -170,15 +170,17 @@
       });
     }
 
-    document.getElementById("msgBtn").onclick = () => {
-      document.getElementById("premiumPopup").style.display = "flex";
-    }
-    document.getElementById("giftBtn").onclick = () => {
-      document.getElementById("jetonPopup").style.display = "flex";
-    }
-    document.getElementById("callBtn").onclick = () => {
-      document.getElementById("goldPopup").style.display = "flex";
-    }
+    document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("msgBtn").onclick = () => {
+    document.getElementById("premiumPopup").style.display = "flex";
+  }
+  document.getElementById("giftBtn").onclick = () => {
+    document.getElementById("jetonPopup").style.display = "flex";
+  }
+  document.getElementById("callBtn").onclick = () => {
+    document.getElementById("goldPopup").style.display = "flex";
+  }
+});
   </script>
 </head>
 <body>
