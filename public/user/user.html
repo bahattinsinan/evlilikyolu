@@ -30,7 +30,12 @@
     const videoPopup = document.getElementById("videoPopup");
 
     onAuthStateChanged(auth, async (user) => {
-      if (user && uid) {
+      if (!user) {
+        location.href = "/login/login.html";
+        return;
+      }
+
+      if (uid) {
         const userDataSnap = await getDoc(doc(db, "users", uid));
         if (userDataSnap.exists()) {
           const data = userDataSnap.data();
