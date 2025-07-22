@@ -338,7 +338,8 @@ await setDoc(doc(db, "onlineUsers", user.uid), {
   timestamp: serverTimestamp()
 });
 
-    onSnapshot(collection(db, "onlineUsers"), (snapshot) => {
+    // 🔁 Tüm online kullanıcıları anlık olarak DOM'a yaz
+onSnapshot(collection(db, "onlineUsers"), (snapshot) => {
   const listDiv = document.getElementById("onlineUsers");
   listDiv.innerHTML = "";
   snapshot.forEach((doc) => {
