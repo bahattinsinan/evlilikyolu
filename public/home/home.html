@@ -215,6 +215,34 @@
 
   </style>
 </head>
+<script type="module">
+  import { app } from "/firebaseConfig.js";
+  import {
+    getFirestore,
+    collection,
+    onSnapshot
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const db = getFirestore(app);
+
+  const listDiv = document.getElementById("onlineUsers");
+  onSnapshot(collection(db, "onlineUsers"), (snapshot) => {
+    listDiv.innerHTML = "";
+    snapshot.forEach((doc) => {
+      const user = doc.data();
+      const card = document.createElement("div");
+      card.className = "user-card";
+      const imageUrl = user.profileImage && user.profileImage.trim() !== "" ? user.profileImage : "/images/default-avatar.png";
+      card.innerHTML = `
+        <a href="/profile/profile-view.html?uid=${user.uid}" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center;">
+          <img src="${imageUrl}" alt="avatar">
+          <h4 style="margin: 5px 0 2px 0;">${user.displayName || "Üye"}</h4>
+          <div style="font-size: 14px; color: #fff;">${user.age ? user.age + " yaş" : ""}</div>
+        </a>`;
+      listDiv.appendChild(card);
+    });
+  });
+</script>
 <body>
 
   <header>
