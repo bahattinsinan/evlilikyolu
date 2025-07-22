@@ -10,7 +10,8 @@
     import { app } from "/firebaseConfig.js";
 
     const auth = getAuth(app);
-    
+    const db = getFirestore(app);
+
     window.logout = async function () {
       const user = auth.currentUser;
       if (user) {
@@ -36,6 +37,14 @@
       min-height: 100vh;
     }
 
+    body.female {
+      background-color: #ffe0f0;
+    }
+
+    body.male {
+      background-color: #e0f7ff;
+    }
+
     .profile-container {
       width: 100%;
       max-width: 400px;
@@ -56,20 +65,8 @@
       margin: 10px 0;
     }
 
-    .action-buttons button {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      margin: 6px 0;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 16px;
-      color: white;
-    }
-
     .bio-box {
-      background: rgba(0,0,0,0.2);
+      background: rgba(0, 0, 0, 0.2);
       padding: 10px;
       border-radius: 6px;
       margin: 10px 0;
@@ -84,16 +81,20 @@
       margin-bottom: 10px;
     }
 
-    body.female {
-      background-color: #ffe0f0;
+    .action-buttons button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin: 6px 0;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      color: white;
     }
 
     body.female .action-buttons button {
       background-color: #d81b60;
-    }
-
-    body.male {
-      background-color: #e0f7ff;
     }
 
     body.male .action-buttons button {
@@ -101,59 +102,28 @@
     }
   </style>
 </head>
-<body class="male"> <!-- veya female -->
+<body class="male">
 
   <div class="profile-container">
     <img src="/images/default-avatar.png" alt="Profil Resmi" class="profile-image" />
 
     <div class="icon-bar">
-  <button id="iconVisits">🖼️</button>
-  <button id="iconSettings">⚙️</button>
-  <button id="iconEdit">✏️</button>
-  <button id="iconPhoto">📷</button>
-  <!-- Profil Fotoğraf İşlemleri Popup -->
-<div id="photoOptionsPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center;">
-  <div style="background:white; color:black; padding:20px; border-radius:10px; text-align:center;">
-    <h3>Profil Fotoğrafı</h3>
-    <button onclick="document.getElementById('photoUploadInput').click()" style="margin:10px;">📤 Fotoğraf Yükle</button>
-    <button onclick="deleteProfilePhoto()" style="margin:10px; background:#c00; color:white;">🗑️ Fotoğrafı Sil</button>
-    <br><br>
-    <button onclick="document.getElementById('photoOptionsPopup').style.display='none'">Kapat</button>
-  </div>
-</div>
+      <button id="iconVisits">🖼️</button>
+      <button id="iconSettings">⚙️</button>
+      <button id="iconEdit">✏️</button>
+      <button id="iconPhoto">📷</button>
+    </div>
 
     <div class="membership">Standart Üye</div>
-
     <div class="bio-box">Henüz bir tanıtım yazısı eklenmedi.</div>
-    <script type="module">
-  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-  import { app } from "/firebaseConfig.js";
 
-  const db = getFirestore(app);
-  const user = JSON.parse(localStorage.getItem("user"));
-
-  if (user) {
-    const docRef = doc(db, "users", user.uid);
-    getDoc(docRef).then((docSnap) => {
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        const bioBox = document.querySelector(".bio-box");
-        if (data.bio) {
-          bioBox.textContent = data.bio;
-        }
-      }
-    });
-  }
-</script>
-
-
-    <div class="action-buttons">      
+    <div class="action-buttons">
       <button onclick="showTokenPopup()">💰 Jeton Al</button>
       <button onclick="showGoldPopup()">🌟 Pro Üye Ol</button>
       <button onclick="showVideoPopup()">📹 Görüntülü Görüşme gold Paket</button>
       <button onclick="window.location.href='/visits/visits.html'">👀 Ziyaretçilerim</button>
-      <button onclick="location.href='/messages.html'">💌 Gelen Mesajlar</button>
-      <button onclick="location.href='/gifts.html'">🎁 Gelen Hediyeler</button>
+      <button onclick="location.href='/messages/messages.html'">💌 Gelen Mesajlar</button>
+      <button onclick="location.href='/gifts/gifts.html'">🎁 Gelen Hediyeler</button>
       <button onclick="location.href='/privacy.html'">🔒 Gizlilik Ayarları</button>
     </div>
   </div>
@@ -218,50 +188,60 @@
       </div>
     </div>
   </div>
-  <input type="file" id="photoUploadInput" style="display:none" onchange="uploadProfilePhoto(event)">
-<script type="module">
-  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-  import { getFirestore, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-  import { app } from "/firebaseConfig.js";
+    <input type="file" id="photoUploadInput" style="display:none" onchange="uploadProfilePhoto(event)">
+  <script type="module">
+    import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+    import { getFirestore, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { app } from "/firebaseConfig.js";
 
-  const storage = getStorage(app);
-
-  window.uploadProfilePhoto = async function (event) {
-    const file = event.target.files[0];
-    if (!file) return;
-
+    const storage = getStorage(app);
     const user = JSON.parse(localStorage.getItem("user"));
-    if (!user) return alert("Kullanıcı bilgisi bulunamadı.");
 
-    const storageRef = ref(storage, `profilePhotos/${user.uid}`);
-    await uploadBytes(storageRef, file);
-    const url = await getDownloadURL(storageRef);
+    if (user) {
+      const docRef = doc(db, "users", user.uid);
+      getDoc(docRef).then((docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          if (data.gender === "Kadın") {
+            document.body.classList.add("female");
+          } else {
+            document.body.classList.add("male");
+          }
+          if (data.photoURL) {
+            document.querySelector(".profile-image").src = data.photoURL;
+          }
+          if (data.bio) {
+            document.querySelector(".bio-box").textContent = data.bio;
+          }
+        }
+      });
+    }
 
-    await updateDoc(doc(db, "users", user.uid), { photoURL: url });
-    alert("Profil fotoğrafınız güncellendi.");
-    location.reload();
-  };
-</script>
-window.deleteProfilePhoto = async function () {
-  const user = JSON.parse(localStorage.getItem("user"));
-  if (!user) return alert("Kullanıcı bulunamadı.");
+    window.uploadProfilePhoto = async function (event) {
+      const file = event.target.files[0];
+      if (!file || !user) return;
+      const storageRef = ref(storage, `profilePhotos/${user.uid}`);
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
+      await updateDoc(doc(db, "users", user.uid), { photoURL: url });
+      alert("Profil fotoğrafınız güncellendi.");
+      location.reload();
+    };
 
-  const storage = getStorage(app);
-  const photoRef = ref(storage, `profilePhotos/${user.uid}`);
+    window.deleteProfilePhoto = async function () {
+      if (!user) return alert("Kullanıcı bulunamadı.");
+      const photoRef = ref(storage, `profilePhotos/${user.uid}`);
+      try {
+        await deleteObject(photoRef);
+      } catch (e) {
+        console.warn("Fotoğraf storage içinde yok.");
+      }
+      await updateDoc(doc(db, "users", user.uid), { photoURL: "" });
+      alert("Fotoğraf silindi.");
+      location.reload();
+    };
+  </script>
 
-  try {
-    await deleteObject(photoRef); // Storage'dan sil
-  } catch (e) {
-    console.warn("Fotoğraf storage içinde yok veya silinmiş.");
-  }
-
-  const db = getFirestore(app);
-  await updateDoc(doc(db, "users", user.uid), { photoURL: "" });
-  alert("Fotoğraf silindi.");
-  location.reload();
-};
-
-  <!-- JS -->
   <script>
     function showTokenPopup() {
       document.getElementById("tokenPopup").style.display = "flex";
@@ -304,51 +284,36 @@ window.deleteProfilePhoto = async function () {
     function copyVideoIban() {
       navigator.clipboard.writeText(document.getElementById("videoIbanText").textContent).then(() => alert("IBAN kopyalandı!"));
     }
-  </script>
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("iconEdit")?.addEventListener("click", () => {
-      const bioBox = document.querySelector(".bio-box");
-      if (!bioBox) return;
 
-      const currentText = bioBox.textContent.trim();
-      const newText = prompt("Kendinizden kısaca bahsedin:", currentText);
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("iconEdit")?.addEventListener("click", () => {
+        const bioBox = document.querySelector(".bio-box");
+        const currentText = bioBox.textContent.trim();
+        const newText = prompt("Kendinizden kısaca bahsedin:", currentText);
+        if (newText === null) return;
+        const forbiddenWords = ["siktir", "amk", "orospu", "piç", "salak", "aptal", "yarrak", "anan", "avradın", "sikik"];
+        const hasBadWords = forbiddenWords.some(word => newText.toLowerCase().includes(word));
+        if (hasBadWords) return alert("Uygunsuz kelimeler tespit edildi.");
 
-      if (newText === null) return; // İptal tuşuna bastıysa işlem yapma
-
-      const forbiddenWords = ["siktir", "amk", "orospu", "piç", "salak", "aptal", "yarrak", "anan", "avradın", "sikik"];
-      const hasBadWords = forbiddenWords.some(word => newText.toLowerCase().includes(word));
-      if (hasBadWords) {
-        alert("Uygunsuz kelimeler tespit edildi.");
-        return;
-      }
-
-      import("/firebaseConfig.js").then(({ app }) => {
-        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js").then(firestore => {
-          const db = firestore.getFirestore(app);
-          const user = JSON.parse(localStorage.getItem("user"));
-          if (!user) return;
-
-          const userRef = firestore.doc(db, "users", user.uid);
-          firestore.updateDoc(userRef, {
-            bio: newText
-          }).then(() => {
-            bioBox.textContent = newText;
-            alert("Tanıtım yazınız kaydedildi.");
+        import("/firebaseConfig.js").then(({ app }) => {
+          import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js").then(firestore => {
+            const db = firestore.getFirestore(app);
+            const user = JSON.parse(localStorage.getItem("user"));
+            if (!user) return;
+            const userRef = firestore.doc(db, "users", user.uid);
+            firestore.updateDoc(userRef, { bio: newText }).then(() => {
+              bioBox.textContent = newText;
+              alert("Tanıtım yazınız kaydedildi.");
+            });
           });
         });
       });
-    });
-  });
-</script>
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("iconPhoto")?.addEventListener("click", () => {
-      document.getElementById("photoOptionsPopup").style.display = "flex";
-    });
-  });
-</script>
 
- 
+      document.getElementById("iconPhoto")?.addEventListener("click", () => {
+        document.getElementById("photoOptionsPopup").style.display = "flex";
+      });
+    });
+  </script>
+
 </body>
 </html>
