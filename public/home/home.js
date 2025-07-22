@@ -40,10 +40,8 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-// 🟢 Online kullanıcıları yükle
-async function loadOnlineUsers() {
-  const q = query(collection(db, "onlineUsers"));
-  const snapshot = await getDocs(q);
+// 🟢 Online kullanıcıları canlı dinle
+onSnapshot(collection(db, "onlineUsers"), (snapshot) => {
   const listDiv = document.getElementById("onlineUsers");
   listDiv.innerHTML = "";
   snapshot.forEach((doc) => {
@@ -59,8 +57,7 @@ async function loadOnlineUsers() {
       </a>`;
     listDiv.appendChild(card);
   });
-}
-loadOnlineUsers();
+});
 
 // 🟡 Paylaşımlar
 const shareQuery = query(collection(db, "shares"), orderBy("createdAt", "desc"));
