@@ -6,53 +6,88 @@
   <title>Ziyaretçi Profili</title>
   <style>
     body {
-      background: url('/images/login1.png') no-repeat center center fixed;
-      background-size: cover;
-      color: #fff;
       font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 30px;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      margin: 0;
+      padding: 20px;
+      color: #fff;
+      transition: background-color 0.5s;
     }
 
     .profile-container {
-      background: rgba(0, 0, 0, 0.7);
-      padding: 30px;
-      border-radius: 15px;
       max-width: 400px;
       margin: auto;
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      background-color: rgba(0,0,0,0.6);
     }
 
     .profile-container img {
       width: 120px;
       height: 120px;
       border-radius: 50%;
+      border: 3px solid #fff;
       object-fit: cover;
-      border: 3px solid hotpink;
     }
 
     .profile-container h2 {
-      margin-top: 15px;
-      font-size: 24px;
+      margin: 15px 0 10px;
     }
 
     .profile-container p {
-      margin: 8px 0;
-      font-size: 16px;
+      margin: 5px 0;
     }
 
-    .back-btn {
-      margin-top: 20px;
-      background: hotpink;
-      color: white;
-      padding: 10px 20px;
+    .action-buttons button {
+      margin: 10px 5px;
+      padding: 10px 15px;
       border: none;
       border-radius: 8px;
+      color: white;
       cursor: pointer;
     }
 
+    .blue-btn { background-color: #007bff; }
+    .pink-btn { background-color: #ff69b4; }
+
+    .popup {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .popup-content {
+      background: white;
+      color: black;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    .popup-content select,
+    .popup-content button {
+      margin-top: 10px;
+    }
+
+    .iban-box {
+      background: #eee;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 6px;
+    }
   </style>
 </head>
-<body>
+<body id="pageBody">
 
   <div class="profile-container">
     <img id="profileImage" src="/images/default-avatar.png" alt="Profil Resmi">
@@ -62,42 +97,145 @@
     <p>Cinsiyet: <span id="gender">-</span></p>
     <p>Aradığı: <span id="lookingFor">-</span></p>
     <p>Hakkında: <span id="bio">-</span></p>
-    <button class="back-btn" onclick="history.back()">◀ Geri Dön</button>
+
+    <div class="action-buttons">
+      <button id="msgBtn">Mesaj Gönder</button>
+      <button id="giftBtn">Hediye Gönder</button>
+      <button id="callBtn">Görüntülü Ara</button>
+    </div>
+  </div>
+
+  <!-- Premium Üyelik Popup -->
+  <div class="popup" id="premiumPopup">
+    <div class="popup-content">
+      <h3>Mesaj göndermek için Premium Üyelik gerekli</h3>
+      <select id="premiumSelect">
+        <option value="">Paket Seçiniz</option>
+        <option>1 Ay – 100 TL</option>
+        <option>3 Ay – 250 TL</option>
+        <option>6 Ay – 500 TL</option>
+      </select>
+      <div id="premiumIban" class="iban-box" style="display:none;">
+        <p><strong>IBAN:</strong> TR91 0001 0040 0452 2812 1550 07</p>
+        <p><strong>Alıcı:</strong> NEJLA KOÇ</p>
+        <p><strong>Banka:</strong> Ziraat Bankası</p>
+        <button onclick="copyIban()">IBAN Kopyala</button>
+      </div>
+      <button onclick="closePopup('premiumPopup')">Kapat</button>
+    </div>
+  </div>
+
+  <!-- Gold Üyelik Popup -->
+  <div class="popup" id="goldPopup">
+    <div class="popup-content">
+      <h3>Görüntülü Arama için Gold Üyelik gerekli</h3>
+      <select id="goldSelect">
+        <option value="">Paket Seçiniz</option>
+        <option>1 Ay – 300 TL</option>
+        <option>3 Ay – 500 TL</option>
+        <option>6 Ay – 800 TL</option>
+        <option>1 Yıl – 1000 TL</option>
+      </select>
+      <div id="goldIban" class="iban-box" style="display:none;">
+        <p><strong>IBAN:</strong> TR91 0001 0040 0452 2812 1550 07</p>
+        <p><strong>Alıcı:</strong> NEJLA KOÇ</p>
+        <p><strong>Banka:</strong> Ziraat Bankası</p>
+        <button onclick="copyIban()">IBAN Kopyala</button>
+      </div>
+      <button onclick="closePopup('goldPopup')">Kapat</button>
+    </div>
+  </div>
+
+  <!-- Jeton Popup -->
+  <div class="popup" id="giftPopup">
+    <div class="popup-content">
+      <h3>Hediye göndermek için jeton gerekli</h3>
+      <select id="giftSelect">
+        <option value="">Paket Seçiniz</option>
+        <option>50 Jeton – 50 TL</option>
+        <option>100 Jeton – 75 TL</option>
+        <option>250 Jeton – 150 TL</option>
+      </select>
+      <div id="giftIban" class="iban-box" style="display:none;">
+        <p><strong>IBAN:</strong> TR91 0001 0040 0452 2812 1550 07</p>
+        <p><strong>Alıcı:</strong> NEJLA KOÇ</p>
+        <p><strong>Banka:</strong> Ziraat Bankası</p>
+        <button onclick="copyIban()">IBAN Kopyala</button>
+      </div>
+      <button onclick="closePopup('giftPopup')">Kapat</button>
+    </div>
   </div>
 
   <script type="module">
     import { app } from "/firebaseConfig.js";
-    import {
-      getFirestore, doc, getDoc
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const db = getFirestore(app);
-    const params = new URLSearchParams(window.location.search);
-    const uid = params.get("uid");
+    const uid = new URLSearchParams(window.location.search).get("uid");
+
+    const body = document.getElementById("pageBody");
+
+    const displayName = document.getElementById("displayName");
+    const age = document.getElementById("age");
+    const city = document.getElementById("city");
+    const gender = document.getElementById("gender");
+    const lookingFor = document.getElementById("lookingFor");
+    const bio = document.getElementById("bio");
+    const profileImage = document.getElementById("profileImage");
 
     if (uid) {
       const userRef = doc(db, "users", uid);
-      getDoc(userRef).then(docSnap => {
+      onSnapshot(userRef, (docSnap) => {
         if (docSnap.exists()) {
           const data = docSnap.data();
-          document.getElementById("displayName").innerText = data.displayName || "Üye";
-          document.getElementById("age").innerText = data.age || "-";
-          document.getElementById("city").innerText = data.city || "-";
-          document.getElementById("gender").innerText = data.gender || "-";
-          document.getElementById("lookingFor").innerText = data.lookingFor || "-";
-          document.getElementById("bio").innerText = data.bio || "-";
-          document.getElementById("profileImage").src = data.profileImage || "/images/default-avatar.png";
+          displayName.innerText = data.displayName || "Üye";
+          age.innerText = data.age || "-";
+          city.innerText = data.city || "-";
+          gender.innerText = data.gender || "-";
+          lookingFor.innerText = data.lookingFor || "-";
+          bio.innerText = data.bio || "-";
+          profileImage.src = data.profileImage || "/images/default-avatar.png";
+
+          // Renk geçişi
+          if (data.gender === "Kadın") {
+            body.style.backgroundColor = "#ffe6f2";
+            document.querySelectorAll(".action-buttons button").forEach(btn => btn.className = "pink-btn");
+          } else {
+            body.style.backgroundColor = "#e6f2ff";
+            document.querySelectorAll(".action-buttons button").forEach(btn => btn.className = "blue-btn");
+          }
         } else {
-          document.querySelector(".profile-container").innerHTML = "<p>Kullanıcı bulunamadı.</p>";
+          displayName.innerText = "Kullanıcı bulunamadı.";
         }
-      }).catch(err => {
-        document.querySelector(".profile-container").innerHTML = "<p>Bir hata oluştu.</p>";
-        console.error(err);
       });
-    } else {
-      document.querySelector(".profile-container").innerHTML = "<p>Geçersiz bağlantı.</p>";
     }
   </script>
 
+  <script>
+    // Popup Aç/Kapat
+    document.getElementById("msgBtn").onclick = () => document.getElementById("premiumPopup").style.display = "flex";
+    document.getElementById("callBtn").onclick = () => document.getElementById("goldPopup").style.display = "flex";
+    document.getElementById("giftBtn").onclick = () => document.getElementById("giftPopup").style.display = "flex";
+
+    document.getElementById("premiumSelect").onchange = () => {
+      document.getElementById("premiumIban").style.display = "block";
+    };
+    document.getElementById("goldSelect").onchange = () => {
+      document.getElementById("goldIban").style.display = "block";
+    };
+    document.getElementById("giftSelect").onchange = () => {
+      document.getElementById("giftIban").style.display = "block";
+    };
+
+    function closePopup(id) {
+      document.getElementById(id).style.display = "none";
+    }
+
+    function copyIban() {
+      const iban = "TR91 0001 0040 0452 2812 1550 07";
+      navigator.clipboard.writeText(iban);
+      alert("IBAN kopyalandı.");
+    }
+  </script>
 </body>
 </html>
