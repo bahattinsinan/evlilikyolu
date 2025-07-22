@@ -10,8 +10,7 @@
     import { app } from "/firebaseConfig.js";
 
     const auth = getAuth(app);
-    const db = getFirestore(app);
-
+    
     window.logout = async function () {
       const user = auth.currentUser;
       if (user) {
@@ -117,6 +116,27 @@
     <div class="membership">Standart Üye</div>
 
     <div class="bio-box">Henüz bir tanıtım yazısı eklenmedi.</div>
+    <script type="module">
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { app } from "/firebaseConfig.js";
+
+  const db = getFirestore(app);
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  if (user) {
+    const docRef = doc(db, "users", user.uid);
+    getDoc(docRef).then((docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        const bioBox = document.querySelector(".bio-box");
+        if (data.bio) {
+          bioBox.textContent = data.bio;
+        }
+      }
+    });
+  }
+</script>
+
 
     <div class="action-buttons">      
       <button onclick="showTokenPopup()">💰 Jeton Al</button>
@@ -268,20 +288,22 @@
     <button onclick="location.href='/profile/profile.html'" style="background: none; border: none; font-size: 24px;">👤</button>
     <button onclick="logout()" style="background: none; border: none; font-size: 18px; color: red;">Çıkış</button>
   </div>
-
-  <script>
+<script>
   document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("iconVisits")?.addEventListener("click", () => {
-      window.location.href = "/visits/visits.html";
-    });
+    const forbiddenWords = ["siktir", "amk", "orospu", "piç", "salak", "aptal", "yarrak", "anan", "avradın", "sikik"];
 
-    document.getElementById("iconSettings")?.addEventListener("click", () => {
-      alert("Ayarlar sayfası henüz eklenmedi.");
-    });
+    function containsForbiddenWords(text) {
+      return forbiddenWords.some(word => text.toLowerCase().includes(word));
+    }
 
     document.getElementById("iconEdit")?.addEventListener("click", () => {
       const bio = prompt("Kendinizden kısaca bahsedin:");
       const city = prompt("Şehrinizi yazın:");
+
+      if (containsForbiddenWords(bio) || containsForbiddenWords(city)) {
+        alert("Uygunsuz kelimeler tespit edildi. Lütfen saygılı bir dil kullanın.");
+        return;
+      }
 
       import("/firebaseConfig.js").then(({ app }) => {
         import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js").then(firestore => {
@@ -300,12 +322,8 @@
         });
       });
     });
-
-    document.getElementById("iconPhoto")?.addEventListener("click", () => {
-      document.getElementById("photoUploadInput")?.click();
-    });
   });
 </script>
-  
+ 
 </body>
 </html>
