@@ -1,171 +1,103 @@
-import {
-  getAuth, onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {
-  getFirestore, collection, query, where, orderBy, getDocs, onSnapshot, setDoc, doc, serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { app } from "/firebaseConfig.js";
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ziyaretçi Profili</title>
+  <style>
+    body {
+      background: url('/images/login1.png') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 30px;
+    }
 
-const auth = getAuth(app);
-const db = getFirestore(app);
+    .profile-container {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 30px;
+      border-radius: 15px;
+      max-width: 400px;
+      margin: auto;
+    }
 
-// 🔔 Bildirim sayısı
-onAuthStateChanged(auth, (user) => {
-  if (!user) return;
-  const notifQuery = query(
-    collection(db, "notifications"),
-    where("to", "==", user.uid),
-    where("seen", "==", false)
-  );
-  onSnapshot(notifQuery, (snapshot) => {
-    const count = snapshot.size;
-    const badge = document.getElementById("notifCount");
-    badge.style.display = count > 0 ? "inline-block" : "none";
-    badge.textContent = count;
-  });
-});
+    .profile-container img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid hotpink;
+    }
 
-// 🔴 Online kullanıcıyı Firestore'a ekle
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    const userDoc = await getDocs(query(collection(db, "users"), where("uid", "==", user.uid)));
-    const userData = userDoc.docs[0]?.data() || {};
-    await setDoc(doc(db, "onlineUsers", user.uid), {
-      uid: user.uid,
-      displayName: userData.displayName || "Üye",
-      profileImage: userData.profileImage || "/images/default-avatar.png",
-      age: userData.age || "",
-      timestamp: serverTimestamp()
-    });
-  }
-});
+    .profile-container h2 {
+      margin-top: 15px;
+      font-size: 24px;
+    }
 
-// 🟢 Online kullanıcıları yükle
-async function loadOnlineUsers() {
-  const q = query(collection(db, "onlineUsers"));
-  const snapshot = await getDocs(q);
-  const listDiv = document.getElementById("onlineUsers");
-  listDiv.innerHTML = "";
-  snapshot.forEach((doc) => {
-    const user = doc.data();
-    const card = document.createElement("div");
-    card.className = "user-card";
-    const imageUrl = user.profileImage && user.profileImage.trim() !== "" ? user.profileImage : "/images/default-avatar.png";
-    card.innerHTML = `
-      <a href="/user/user.html?uid=${user.uid}" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center;">
-        <img src="${imageUrl}" alt="avatar">
-        <h4 style="margin: 5px 0 2px 0;">${user.displayName || "Üye"}</h4>
-        <div style="font-size: 14px; color: #fff;">${user.age ? user.age + " yaş" : ""}</div>
-      </a>`;
-    listDiv.appendChild(card);
-  });
-}
-loadOnlineUsers();
+    .profile-container p {
+      margin: 8px 0;
+      font-size: 16px;
+    }
 
-// 🟡 Paylaşımlar
-const shareQuery = query(collection(db, "shares"), orderBy("createdAt", "desc"));
-const sharedPostsDiv = document.getElementById("sharedPosts");
+    .back-btn {
+      margin-top: 20px;
+      background: hotpink;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
 
-onSnapshot(shareQuery, (snapshot) => {
-  sharedPostsDiv.innerHTML = "";
-  const now = new Date();
-  const threeDaysAgo = new Date(now.getTime() - 72 * 60 * 60 * 1000);
-  snapshot.forEach((doc) => {
-    const post = doc.data();
-    if (!post.createdAt || post.createdAt.toDate() < threeDaysAgo) return;
-    const postDiv = document.createElement("div");
-    postDiv.style.background = "rgba(0,0,0,0.6)";
-    postDiv.style.padding = "15px";
-    postDiv.style.borderRadius = "10px";
-    postDiv.style.maxWidth = "400px";
-    postDiv.style.width = "90%";
-    postDiv.style.color = "white";
-    postDiv.style.textAlign = "left";
-    postDiv.innerHTML = `
-      <a href="/user/user.html?uid=${post.uid}" style="color:white; text-decoration:none;">
-        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
-          <img src="${post.profileImage}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
-          <div>
-            <strong>${post.displayName}</strong><br/>
-            <small>${post.age ? post.age + " yaş" : ""}</small>
-          </div>
-        </div>
-      </a>
-      <p style="margin:10px 0;">${post.text}</p>
-      <div style="display:flex; justify-content:space-around;">
-        <button onclick="showGoldPopup()" style="background: #ff69b4; color:white; border:none; border-radius:8px; padding:5px 10px;">Mesaj Gönder</button>
-        <button onclick="showGiftPopup()" style="background: gold; color:black; border:none; border-radius:8px; padding:5px 10px;">Hediye Gönder</button>
-      </div>
-    `;
-    sharedPostsDiv.appendChild(postDiv);
-  });
-});
+  </style>
+</head>
+<body>
 
-async function submitShare() {
-  const user = auth.currentUser;
-  if (!user) {
-    alert("Paylaşım yapabilmek için giriş yapmalısınız.");
-    return;
-  }
-  const input = document.getElementById("shareText");
-  const text = input.value.trim();
-  if (!text) return alert("Lütfen bir şeyler yazın.");
-  await setDoc(doc(collection(db, "shares")), {
-    uid: user.uid,
-    text,
-    createdAt: serverTimestamp(),
-    displayName: user.displayName || "Üye",
-    profileImage: user.photoURL || "/images/default-avatar.png",
-    age: "", // yaş istersen buraya eklenebilir
-  });
-  input.value = "";
-}
+  <div class="profile-container">
+    <img id="profileImage" src="/images/default-avatar.png" alt="Profil Resmi">
+    <h2 id="displayName">Yükleniyor...</h2>
+    <p>Yaş: <span id="age">-</span></p>
+    <p>Şehir: <span id="city">-</span></p>
+    <p>Cinsiyet: <span id="gender">-</span></p>
+    <p>Aradığı: <span id="lookingFor">-</span></p>
+    <p>Hakkında: <span id="bio">-</span></p>
+    <button class="back-btn" onclick="history.back()">◀ Geri Dön</button>
+  </div>
 
-// 🟣 Premium Mesaj Gönderme Popup
-window.showGoldPopup = function () {
-  const popup = document.getElementById("goldPopup");
-  popup.style.display = "block";
-};
+  <script type="module">
+    import { app } from "/firebaseConfig.js";
+    import {
+      getFirestore, doc, getDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-window.closeGoldPopup = function () {
-  const popup = document.getElementById("goldPopup");
-  popup.style.display = "none";
-};
+    const db = getFirestore(app);
+    const params = new URLSearchParams(window.location.search);
+    const uid = params.get("uid");
 
-window.showGoldIban = function () {
-  const select = document.getElementById("goldSelect");
-  const iban = document.getElementById("goldIban");
-  iban.style.display = select.value ? "block" : "none";
-};
+    if (uid) {
+      const userRef = doc(db, "users", uid);
+      getDoc(userRef).then(docSnap => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          document.getElementById("displayName").innerText = data.displayName || "Üye";
+          document.getElementById("age").innerText = data.age || "-";
+          document.getElementById("city").innerText = data.city || "-";
+          document.getElementById("gender").innerText = data.gender || "-";
+          document.getElementById("lookingFor").innerText = data.lookingFor || "-";
+          document.getElementById("bio").innerText = data.bio || "-";
+          document.getElementById("profileImage").src = data.profileImage || "/images/default-avatar.png";
+        } else {
+          document.querySelector(".profile-container").innerHTML = "<p>Kullanıcı bulunamadı.</p>";
+        }
+      }).catch(err => {
+        document.querySelector(".profile-container").innerHTML = "<p>Bir hata oluştu.</p>";
+        console.error(err);
+      });
+    } else {
+      document.querySelector(".profile-container").innerHTML = "<p>Geçersiz bağlantı.</p>";
+    }
+  </script>
 
-// 🟠 Hediye Gönderme Popup
-window.showGiftPopup = function () {
-  const popup = document.getElementById("giftPopup");
-  popup.style.display = "block";
-};
-
-window.closeGiftPopup = function () {
-  const popup = document.getElementById("giftPopup");
-  popup.style.display = "none";
-};
-
-window.showGiftIban = function () {
-  const select = document.getElementById("giftSelect");
-  const iban = document.getElementById("giftIban");
-  iban.style.display = select.value ? "block" : "none";
-};
-
-// Sayfa geçiş
-window.goTo = function (target) {
-  if (target === "home") location.href = "/home/home.html";
-  else if (target === "profile") location.href = "/profile/profile.html";
-  else if (target === "messages") location.href = "/messages/messages.html";
-  else if (target === "notifications") location.href = "/notifications/notifications.html";
-  else if (target === "gifts") location.href = "/gifts/gifts.html";
-};
-
-window.logout = function () {
-  signOut(auth).then(() => {
-    location.href = "/login/login.html";
-  });
-};
+</body>
+</html>

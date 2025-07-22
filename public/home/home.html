@@ -332,12 +332,12 @@ onAuthStateChanged(auth, (user) => {
         const imageUrl = user.profileImage && user.profileImage.trim() !== "" ? user.profileImage : "/images/default-avatar.png";
 
         card.innerHTML = `
-        <a href="/profile/profile-view.html?uid=${user.uid}" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center;">
-        <img src="${imageUrl}" alt="avatar">
-        <h4 style="margin: 5px 0 2px 0;">${user.displayName || "Üye"}</h4>
-        <div style="font-size: 14px; color: #fff;">${user.age ? user.age + " yaş" : ""}</div>
-        </a>
-      `;
+  <a href="/user/user.html?uid=${user.uid}" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center;">
+    <img src="${imageUrl}" alt="avatar">
+    <h4 style="margin: 5px 0 2px 0;">${user.displayName || "Üye"}</h4>
+    <div style="font-size: 14px; color: #fff;">${user.age ? user.age + " yaş" : ""}</div>
+  </a>
+`;
 
         listDiv.appendChild(card);
       });
@@ -375,7 +375,7 @@ onAuthStateChanged(auth, (user) => {
         postDiv.style.color = "white";
         postDiv.style.textAlign = "left";
         postDiv.innerHTML = `
-  <a href="/profile/profile-view.html?uid=${post.uid}" style="color:white; text-decoration:none;">
+  <a href="/user/user.html?uid=${post.uid}" style="color:white; text-decoration:none;">
     <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
       <img src="${post.profileImage}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
       <div>
