@@ -279,49 +279,42 @@
     }
   </script>
 
-  <!-- ALT MENÜ -->
-  <div style="position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 5px rgba(0,0,0,0.2); z-index: 9999;">
-    <button onclick="location.href='/home/home.html'" style="background: none; border: none; font-size: 24px;">🏠</button>
-    <button onclick="location.href='/messages.html'" style="background: none; border: none; font-size: 24px;">✉️</button>
-    <button onclick="showGiftPopup()" style="background: none; border: none; font-size: 24px;">🎁</button>
-    <button onclick="location.href='/notifications.html'" style="background: none; border: none; font-size: 24px;">🔔</button>
-    <button onclick="location.href='/profile/profile.html'" style="background: none; border: none; font-size: 24px;">👤</button>
-    <button onclick="logout()" style="background: none; border: none; font-size: 18px; color: red;">Çıkış</button>
-  </div>
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
+  <script type="module">
+  document.addEventListener("DOMContentLoaded", async () => {
+    const { getFirestore, doc, getDoc, updateDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+    const { app } = await import("/firebaseConfig.js");
+
+    const db = getFirestore(app);
+    const user = JSON.parse(localStorage.getItem("user"));
+
     const forbiddenWords = ["siktir", "amk", "orospu", "piç", "salak", "aptal", "yarrak", "anan", "avradın", "sikik"];
 
     function containsForbiddenWords(text) {
       return forbiddenWords.some(word => text.toLowerCase().includes(word));
     }
 
-    document.getElementById("iconEdit")?.addEventListener("click", () => {
-      const bio = prompt("Kendinizden kısaca bahsedin:");
-      const city = prompt("Şehrinizi yazın:");
-
-      if (containsForbiddenWords(bio) || containsForbiddenWords(city)) {
-        alert("Uygunsuz kelimeler tespit edildi. Lütfen saygılı bir dil kullanın.");
+    window.saveBio = async function (el) {
+      const text = el.textContent.trim();
+      if (containsForbiddenWords(text)) {
+        alert("Uygunsuz kelimeler tespit edildi.");
+        el.textContent = "";
         return;
       }
+      if (user) {
+        const ref = doc(db, "users", user.uid);
+        await updateDoc(ref, { bio: text });
+      }
+    };
 
-      import("/firebaseConfig.js").then(({ app }) => {
-        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js").then(firestore => {
-          const db = firestore.getFirestore(app);
-          const user = JSON.parse(localStorage.getItem("user"));
-          if (!user) return;
-
-          const userRef = firestore.doc(db, "users", user.uid);
-          firestore.updateDoc(userRef, {
-            bio: bio || "",
-            city: city || ""
-          }).then(() => {
-            alert("Profiliniz güncellendi.");
-            location.reload();
-          });
-        });
-      });
-    });
+    if (user) {
+      const ref = doc(db, "users", user.uid);
+      const snap = await getDoc(ref);
+      if (snap.exists()) {
+        const data = snap.data();
+        const el = document.querySelector(".bio-box");
+        if (data.bio && el) el.textContent = data.bio;
+      }
+    }
   });
 </script>
  
