@@ -113,12 +113,6 @@
       width: 100%;
     }
   </style>
-</head>
-<body>
-  <div id="profileRoot"></div>
-
-  <!-- popup'lar buraya yapışacak (önceki verdiğin içerikler zaten doğru) -->
-
   <script type="module">
     import { app } from "/firebaseConfig.js";
     import {
@@ -145,7 +139,7 @@
         <button id="callBtn" class="blue-btn">Görüntülü Ara</button>
       </div>
     `;
-    document.getElementById("profileRoot").appendChild(profileContainer);
+    document.body.appendChild(profileContainer);
 
     if (userId) {
       const userRef = doc(db, "users", userId);
@@ -162,6 +156,7 @@
             document.getElementById("profileImage").src = data.photoURL;
           }
 
+          // arka plan ve buton rengi
           if (data.gender === "Kadın") {
             document.body.style.backgroundColor = "#ffe6f0";
             document.querySelectorAll(".blue-btn").forEach(btn => {
@@ -175,20 +170,18 @@
       });
     }
 
-    document.addEventListener("click", (e) => {
-      if (e.target.id === "msgBtn") {
-        document.getElementById("premiumPopup")?.style.display = "flex";
-      }
-      if (e.target.id === "giftBtn") {
-        document.getElementById("jetonPopup")?.style.display = "flex";
-      }
-      if (e.target.id === "callBtn") {
-        document.getElementById("goldPopup")?.style.display = "flex";
-      }
-    });
+    document.getElementById("msgBtn").onclick = () => {
+      document.getElementById("premiumPopup").style.display = "flex";
+    }
+    document.getElementById("giftBtn").onclick = () => {
+      document.getElementById("jetonPopup").style.display = "flex";
+    }
+    document.getElementById("callBtn").onclick = () => {
+      document.getElementById("goldPopup").style.display = "flex";
+    }
   </script>
-</body>
-</html>
+</head>
+<body>
 
 <!-- Premium Popup -->
 <div class="popup" id="premiumPopup">
