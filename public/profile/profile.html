@@ -108,11 +108,11 @@
     <img src="/images/default-avatar.png" alt="Profil Resmi" class="profile-image" />
 
     <div class="icon-bar">
-      <button onclick="location.href='/profile/gallery.html'">🖼️</button>
-      <button onclick="location.href='/profile/settings.html'">⚙️</button>
-      <button onclick="location.href='/profile/bio-edit.html'">✏️</button>
-      <button onclick="location.href='/profile/photo.html'">📷</button>
-    </div>
+  <button id="iconVisits">🖼️</button>
+  <button id="iconSettings">⚙️</button>
+  <button id="iconEdit">✏️</button>
+  <button id="iconPhoto">📷</button>
+</div>
 
     <div class="membership">Standart Üye</div>
 
@@ -189,6 +189,30 @@
       </div>
     </div>
   </div>
+  <input type="file" id="photoUploadInput" style="display:none" onchange="uploadProfilePhoto(event)">
+<script type="module">
+  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+  import { getFirestore, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { app } from "/firebaseConfig.js";
+
+  const storage = getStorage(app);
+
+  window.uploadProfilePhoto = async function (event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) return alert("Kullanıcı bilgisi bulunamadı.");
+
+    const storageRef = ref(storage, `profilePhotos/${user.uid}`);
+    await uploadBytes(storageRef, file);
+    const url = await getDownloadURL(storageRef);
+
+    await updateDoc(doc(db, "users", user.uid), { photoURL: url });
+    alert("Profil fotoğrafınız güncellendi.");
+    location.reload();
+  };
+</script>
 
   <!-- JS -->
   <script>
@@ -244,6 +268,44 @@
     <button onclick="location.href='/profile/profile.html'" style="background: none; border: none; font-size: 24px;">👤</button>
     <button onclick="logout()" style="background: none; border: none; font-size: 18px; color: red;">Çıkış</button>
   </div>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("iconVisits")?.addEventListener("click", () => {
+      window.location.href = "/visits/visits.html";
+    });
+
+    document.getElementById("iconSettings")?.addEventListener("click", () => {
+      alert("Ayarlar sayfası henüz eklenmedi.");
+    });
+
+    document.getElementById("iconEdit")?.addEventListener("click", () => {
+      const bio = prompt("Kendinizden kısaca bahsedin:");
+      const city = prompt("Şehrinizi yazın:");
+
+      import("/firebaseConfig.js").then(({ app }) => {
+        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js").then(firestore => {
+          const db = firestore.getFirestore(app);
+          const user = JSON.parse(localStorage.getItem("user"));
+          if (!user) return;
+
+          const userRef = firestore.doc(db, "users", user.uid);
+          firestore.updateDoc(userRef, {
+            bio: bio || "",
+            city: city || ""
+          }).then(() => {
+            alert("Profiliniz güncellendi.");
+            location.reload();
+          });
+        });
+      });
+    });
+
+    document.getElementById("iconPhoto")?.addEventListener("click", () => {
+      document.getElementById("photoUploadInput")?.click();
+    });
+  });
+</script>
   
 </body>
 </html>
