@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profilimi Ziyaret Edenler</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+    }
+    h1 {
+      text-align: center;
+      color: #ff1493;
+    }
+    .visitor-card {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 10px auto;
+      max-width: 400px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .visitor-card img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+  <h1>Profilimi Ziyaret Edenler</h1>
+  <div id="visitorsList"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore, collection, query, where, orderBy, onSnapshot, getDoc, doc
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import {
+      getAuth, onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBXDPSHzYwDKJMKflRPaC-egd-r6dLzL6U",
+      authDomain: "evlilikyolutr.firebaseapp.com",
+      projectId: "evlilikyolutr",
+      storageBucket: "evlilikyolutr.firebasestorage.app",
+      messagingSenderId: "299542496680",
+      appId: "1:299542496680:web:79967f42f243b64c4dc99d"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        alert("Lütfen giriş yapınız.");
+        window.location.href = "/login/login.html";
+        return;
+      }
+
+      const q = query(
+        collection(db, "visits"),
+        where("visitedUid", "==", user.uid),
+        orderBy("timestamp", "desc")
+      );
+
+      onSnapshot(q, async (snapshot) => {
+        const container = document.getElementById("visitorsList");
+        container.innerHTML = "";
+
+        const addedUids = new Set();
+
+        for (const docSnap of snapshot.docs) {
+          const visit = docSnap.data();
+          const vuid = visit.visitorUid;
+
+          if (addedUids.has(vuid)) continue;
+          addedUids.add(vuid);
+
+          const userDoc = await getDoc(doc(db, "users", vuid));
+          const udata = userDoc.data();
+
+          const div = document.createElement("div");
+          div.className = "visitor-card";
+          div.innerHTML = `
+            <img src="${udata.profileImage || '/images/default-avatar.png'}" alt="avatar">
+            <div>
+              <strong>${udata.displayName || 'Üye'}</strong><br/>
+              ${udata.age ? udata.age + " yaş" : ""}
+            </div>
+          `;
+          container.appendChild(div);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
