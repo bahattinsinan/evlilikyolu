@@ -258,6 +258,27 @@
     alert("IBAN kopyalandı.");
   }
 </script>
+<script type="module">
+  import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { app } from "/firebaseConfig.js";
+
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  const googleBtn = document.getElementById("googleLogin");
+  if (googleBtn) {
+    googleBtn.addEventListener("click", () => {
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          window.location.href = "/home/home.html";
+        })
+        .catch((error) => {
+          console.error("Google giriş hatası:", error);
+          alert("Google ile giriş başarısız: " + error.message);
+        });
+    });
+  }
+</script>
 
 </body>
 </html>
