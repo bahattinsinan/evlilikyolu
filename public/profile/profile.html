@@ -201,7 +201,7 @@
     <input type="file" id="photoUploadInput" style="display:none" onchange="uploadProfilePhoto(event)">
   <script type="module">
     import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-    import { getFirestore, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    
     import { app } from "/firebaseConfig.js";
 
     const storage = getStorage(app);
