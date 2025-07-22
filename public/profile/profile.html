@@ -10,8 +10,7 @@
     import { app } from "/firebaseConfig.js";
 
     const auth = getAuth(app);
-    const db = getFirestore(app);
-
+    
     window.logout = async function () {
       const user = auth.currentUser;
       if (user) {
@@ -206,6 +205,7 @@
     import { app } from "/firebaseConfig.js";
 
     const storage = getStorage(app);
+    const db = getFirestore(app);
     const user = JSON.parse(localStorage.getItem("user"));
 
     if (user) {
