@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ana Sayfa - Evlilik Yolu</title>
   <style>
+    /* === CSS aynen korunmuştur === */
     body {
       margin: 0;
       font-family: sans-serif;
@@ -28,24 +29,16 @@
       top: 15px;
       font-size: 38px;
       animation: spin 3s linear infinite, colorchange 5s infinite;
+      transform-style: preserve-3d;
+      transform-origin: center;
     }
 
-    .heart.left {
-      left: 20px;
-    }
-
-    .heart.right {
-      right: 20px;
-    }
+    .heart.left { left: 20px; }
+    .heart.right { right: 20px; }
 
     @keyframes spin {
       from { transform: rotateY(0deg); }
       to { transform: rotateY(360deg); }
-    }
-
-    .heart {
-      transform-style: preserve-3d;
-      transform-origin: center;
     }
 
     @keyframes colorchange {
@@ -115,144 +108,113 @@
     }
 
     .help-button {
-  position: fixed;
-  bottom: 80px;
-  right: 20px;
-  background: linear-gradient(to right, #ff69b4, #ff1493);
-  color: white;
-  border: none;
-  padding: 15px;
-  border-radius: 50%;
-  font-size: 20px;
-  cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  transition: transform 0.2s ease;
-}
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      background: linear-gradient(to right, #ff69b4, #ff1493);
+      color: white;
+      border: none;
+      padding: 15px;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      transition: transform 0.2s ease;
+    }
 
-.help-button:hover {
-  transform: scale(1.1);
-}
+    .help-button:hover {
+      transform: scale(1.1);
+    }
 
-.help-panel {
-  position: fixed;
-  bottom: 140px;
-  right: 20px;
-  width: 320px;
-  max-height: 500px;
-  background: white;
-  color: black;
-  border-radius: 15px;
-  display: none;
-  flex-direction: column;
-  box-shadow: 0 0 15px rgba(0,0,0,0.5);
-  overflow: hidden;
-  z-index: 9999;
-}
+    .help-panel {
+      position: fixed;
+      bottom: 140px;
+      right: 20px;
+      width: 320px;
+      max-height: 500px;
+      background: white;
+      color: black;
+      border-radius: 15px;
+      display: none;
+      flex-direction: column;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+      overflow: hidden;
+      z-index: 9999;
+    }
 
-.help-header {
-  background: linear-gradient(to right, #ff69b4, #ff1493);
-  color: white;
-  padding: 12px;
-  font-weight: bold;
-  text-align: center;
-}
+    .help-header {
+      background: linear-gradient(to right, #ff69b4, #ff1493);
+      color: white;
+      padding: 12px;
+      font-weight: bold;
+      text-align: center;
+    }
 
-.help-messages {
-  flex: 1;
-  padding: 12px;
-  overflow-y: auto;
-  font-size: 14px;
-}
+    .help-messages {
+      flex: 1;
+      padding: 12px;
+      overflow-y: auto;
+      font-size: 14px;
+    }
 
-.help-input {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  border-top: 1px solid #ccc;
-  padding: 10px;
-  background: #f8f8f8;
-}
+    .help-input {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      border-top: 1px solid #ccc;
+      padding: 10px;
+      background: #f8f8f8;
+    }
 
-.help-input input[type="text"] {
-  flex: 1 1 100%;
-  padding: 8px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
+    .help-input input[type="text"] {
+      flex: 1 1 100%;
+      padding: 8px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
 
-.help-input input[type="file"] {
-  flex: 1 1 60%;
-  font-size: 12px;
-}
+    .help-input input[type="file"] {
+      flex: 1 1 60%;
+      font-size: 12px;
+    }
 
-.help-input button {
-  flex: 1 1 35%;
-  background: #ff69b4;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-}
+    .help-input button {
+      flex: 1 1 35%;
+      background: #ff69b4;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
 
-   @media (max-width: 600px) {
-  .online-users {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-  }
+    @media (max-width: 600px) {
+      .online-users {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+      }
 
-  .user-card {
-    flex: 0 0 auto;
-    margin-right: 10px;
-  }
+      .user-card {
+        flex: 0 0 auto;
+        margin-right: 10px;
+      }
 
-  .help-panel {
-    width: 90%;
-    right: 5%;
-  }
-}
-
+      .help-panel {
+        width: 90%;
+        right: 5%;
+      }
+    }
   </style>
 </head>
-<script type="module">
-  import { app } from "/firebaseConfig.js";
-  import {
-    getFirestore,
-    collection,
-    onSnapshot
-  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  const db = getFirestore(app);
-
-  const listDiv = document.getElementById("onlineUsers");
-  onSnapshot(collection(db, "onlineUsers"), (snapshot) => {
-    listDiv.innerHTML = "";
-    snapshot.forEach((doc) => {
-      const user = doc.data();
-      const card = document.createElement("div");
-      card.className = "user-card";
-      const imageUrl = user.profileImage && user.profileImage.trim() !== "" ? user.profileImage : "/images/default-avatar.png";
-      card.innerHTML = `
-        <a href="/profile/profile-view.html?uid=${user.uid}" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center;">
-          <img src="${imageUrl}" alt="avatar">
-          <h4 style="margin: 5px 0 2px 0;">${user.displayName || "Üye"}</h4>
-          <div style="font-size: 14px; color: #fff;">${user.age ? user.age + " yaş" : ""}</div>
-        </a>`;
-      listDiv.appendChild(card);
-    });
-  });
-</script>
 <body>
-
   <header>
     <div class="heart left">💗</div>
     Evlilik Yolu
     <div class="heart right">💗</div>
   </header>
-
   <div class="online-users" id="onlineUsers"></div>
-
   <div style="text-align: center; margin: 20px;">
     <textarea id="shareText" placeholder="Ne düşünüyorsun?" style="width: 90%; max-width: 400px; height: 80px; padding: 10px; border-radius: 10px; border: 1px solid #ccc;"></textarea>
     <br/>
@@ -604,4 +566,6 @@ function showGiftIban() {
     <input type="file" id="helpFile" />
     <button onclick="sendHelpMessage()">Gönder</button>
   </div>
-</div>
+   <script type="module" src="/home/home-script.js"></script>
+</body>
+</html>
