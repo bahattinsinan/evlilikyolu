@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kullanıcı Profili</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+
+    .profile-container {
+      width: 100%;
+      max-width: 400px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .profile-image {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 10px;
+    }
+
+    .membership {
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .bio-box {
+      background: rgba(0,0,0,0.2);
+      padding: 10px;
+      border-radius: 6px;
+      margin: 10px 0;
+      text-align: left;
+      color: white;
+    }
+
+    .action-buttons button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin: 6px 0;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      color: white;
+    }
+
+    body.female {
+      background-color: #ffe0f0;
+    }
+
+    body.female .action-buttons button {
+      background-color: #d81b60;
+    }
+
+    body.male {
+      background-color: #e0f7ff;
+    }
+
+    body.male .action-buttons button {
+      background-color: #1565c0;
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-container">
+    <img id="profileImage" src="/images/default-avatar.png" class="profile-image" alt="Profil Resmi" />
+    <h2 id="userName">Kullanıcı Adı</h2>
+    <div class="membership" id="userAge">Yaş: -</div>
+    <div class="bio-box" id="userBio">Tanıtım yazısı...</div>
+
+    <div class="action-buttons">
+      <button onclick="showGiftPopup()">🎁 Hediye Gönder</button>
+      <button onclick="sendMessage()">💬 Mesaj Gönder</button>
+      <button onclick="startVideoCall()">📹 Görüntülü Ara</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { getFirestore, doc, getDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { app } from "/firebaseConfig.js";
+
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    const params = new URLSearchParams(window.location.search);
+    const uid = params.get("uid");
+
+    if (!uid) {
+      alert("Kullanıcı bulunamadı");
+    }
+
+    async function loadUserProfile() {
+      const userRef = doc(db, "users", uid);
+      const userSnap = await getDoc(userRef);
+
+      if (userSnap.exists()) {
+        const user = userSnap.data();
+        document.getElementById("userName").innerText = user.displayName || "Kullanıcı";
+        document.getElementById("userAge").innerText = `Yaş: ${user.age || "-"}`;
+        document.getElementById("userBio").innerText = user.bio || "Tanıtım yazısı yok.";
+        document.getElementById("profileImage").src = user.photoURL || "/images/default-avatar.png";
+
+        document.body.classList.add(user.gender === "Kadın" ? "female" : "male");
+      }
+    }
+
+    async function logVisit() {
+      const currentUser = auth.currentUser;
+      if (!currentUser || currentUser.uid === uid) return;
+
+      const visitsRef = collection(db, "visits", uid, "list");
+      await addDoc(visitsRef, {
+        visitorUid: currentUser.uid,
+        timestamp: serverTimestamp()
+      });
+    }
+
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        await loadUserProfile();
+        await logVisit();
+      } else {
+        window.location.href = "/login/login.html";
+      }
+    });
+
+    function showGiftPopup() {
+      alert("Hediye Gönderme Ekranı Açılacak.");
+    }
+
+    function sendMessage() {
+      alert("Mesaj Gönderme Ekranı Açılacak.");
+    }
+
+    function startVideoCall() {
+      alert("Görüntülü Görüşme Başlatılacak.");
+    }
+  </script>
+</body>
+</html>
