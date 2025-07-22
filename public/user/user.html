@@ -2,152 +2,137 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kullanıcı Profili</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      flex-direction: column;
-    }
-
-    .profile-container {
-      width: 100%;
-      max-width: 400px;
-      padding: 20px;
-      text-align: center;
-    }
-
-    .profile-image {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin-bottom: 10px;
-    }
-
-    .membership {
-      font-weight: bold;
-      margin: 10px 0;
-    }
-
-    .bio-box {
-      background: rgba(0,0,0,0.2);
-      padding: 10px;
-      border-radius: 6px;
-      margin: 10px 0;
-      text-align: left;
-      color: white;
-    }
-
-    .action-buttons button {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      margin: 6px 0;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 16px;
-      color: white;
-    }
-
-    body.female {
-      background-color: #ffe0f0;
-    }
-
-    body.female .action-buttons button {
-      background-color: #d81b60;
-    }
-
-    body.male {
-      background-color: #e0f7ff;
-    }
-
-    body.male .action-buttons button {
-      background-color: #1565c0;
-    }
-  </style>
-</head>
-<body>
-  <div class="profile-container">
-    <img id="profileImage" src="/images/default-avatar.png" class="profile-image" alt="Profil Resmi" />
-    <h2 id="userName">Kullanıcı Adı</h2>
-    <div class="membership" id="userAge">Yaş: -</div>
-    <div class="bio-box" id="userBio">Tanıtım yazısı...</div>
-
-    <div class="action-buttons">
-      <button onclick="showGiftPopup()">🎁 Hediye Gönder</button>
-      <button onclick="sendMessage()">💬 Mesaj Gönder</button>
-      <button onclick="startVideoCall()">📹 Görüntülü Ara</button>
-    </div>
-  </div>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ziyaret Edilen Profil</title>
   <script type="module">
-    import { getFirestore, doc, getDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-    import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
     import { app } from "/firebaseConfig.js";
 
-    const db = getFirestore(app);
     const auth = getAuth(app);
+    const db = getFirestore(app);
 
     const params = new URLSearchParams(window.location.search);
     const uid = params.get("uid");
 
-    if (!uid) {
-      alert("Kullanıcı bulunamadı");
-    }
+    const profileImage = document.getElementById("profileImage");
+    const displayName = document.getElementById("displayName");
+    const age = document.getElementById("age");
+    const bio = document.getElementById("bio");
+    const gallery = document.getElementById("gallery");
 
-    async function loadUserProfile() {
-      const userRef = doc(db, "users", uid);
-      const userSnap = await getDoc(userRef);
+    const messageBtn = document.getElementById("messageBtn");
+    const giftBtn = document.getElementById("giftBtn");
+    const videoBtn = document.getElementById("videoBtn");
 
-      if (userSnap.exists()) {
-        const user = userSnap.data();
-        document.getElementById("userName").innerText = user.displayName || "Kullanıcı";
-        document.getElementById("userAge").innerText = `Yaş: ${user.age || "-"}`;
-        document.getElementById("userBio").innerText = user.bio || "Tanıtım yazısı yok.";
-        document.getElementById("profileImage").src = user.photoURL || "/images/default-avatar.png";
+    const goldPopup = document.getElementById("goldPopup");
+    const tokenPopup = document.getElementById("tokenPopup");
+    const videoPopup = document.getElementById("videoPopup");
 
-        document.body.classList.add(user.gender === "Kadın" ? "female" : "male");
-      }
-    }
+    onAuthStateChanged(auth, async (user) => {
+      if (user && uid) {
+        const userDataSnap = await getDoc(doc(db, "users", uid));
+        if (userDataSnap.exists()) {
+          const data = userDataSnap.data();
+          displayName.textContent = data.displayName || "Kullanıcı";
+          age.textContent = data.age ? `${data.age} yaşında` : "Yaş yok";
+          bio.textContent = data.bio || "Tanıtım yazısı yok";
+          if (data.photoURL) profileImage.src = data.photoURL;
+          document.body.classList.add(data.gender === "Kadın" ? "female" : "male");
 
-    async function logVisit() {
-      const currentUser = auth.currentUser;
-      if (!currentUser || currentUser.uid === uid) return;
+          const gallerySnap = await getDocs(collection(db, "users", uid, "gallery"));
+          gallery.innerHTML = "";
+          gallerySnap.forEach(doc => {
+            const img = document.createElement("img");
+            img.src = doc.data().url;
+            img.style.width = "100px";
+            img.style.margin = "5px";
+            gallery.appendChild(img);
+          });
+        }
 
-      const visitsRef = collection(db, "visits", uid, "list");
-      await addDoc(visitsRef, {
-        visitorUid: currentUser.uid,
-        timestamp: serverTimestamp()
-      });
-    }
+        // Ziyaretçi kaydı
+        await setDoc(doc(db, `visits/${uid}/list`, user.uid), {
+          visitedBy: user.uid,
+          visitedAt: new Date()
+        });
 
-    auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        await loadUserProfile();
-        await logVisit();
-      } else {
-        window.location.href = "/login/login.html";
+        // Jeton ve üyelik kontrolü
+        const currentUserSnap = await getDoc(doc(db, "users", user.uid));
+        if (currentUserSnap.exists()) {
+          const currentUser = currentUserSnap.data();
+          messageBtn.addEventListener("click", () => {
+            if (!currentUser.gold) return goldPopup.style.display = "flex";
+            location.href = `/messages.html?to=${uid}`;
+          });
+
+          giftBtn.addEventListener("click", () => {
+            if (!currentUser.balance || currentUser.balance < 50) return tokenPopup.style.display = "flex";
+            alert("Hediye gönderme ekranı açılacak");
+          });
+
+          videoBtn.addEventListener("click", () => {
+            if (!currentUser.videoGold) return videoPopup.style.display = "flex";
+            alert("Görüntülü arama başlatılıyor...");
+          });
+        }
       }
     });
-
-    function showGiftPopup() {
-      alert("Hediye Gönderme Ekranı Açılacak.");
-    }
-
-    function sendMessage() {
-      alert("Mesaj Gönderme Ekranı Açılacak.");
-    }
-
-    function startVideoCall() {
-      alert("Görüntülü Görüşme Başlatılacak.");
-    }
   </script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+    body.male { background-color: #e0f7ff; }
+    body.female { background-color: #ffe0f0; }
+    .container { text-align: center; }
+    .profile-image { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; }
+    .membership { font-weight: bold; margin: 10px 0; }
+    .bio { background: rgba(0,0,0,0.1); padding: 10px; border-radius: 8px; margin: 10px auto; max-width: 300px; }
+    .gallery img { width: 80px; height: 80px; object-fit: cover; border-radius: 4px; margin: 4px; }
+    .buttons { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 20px; }
+    .buttons button { padding: 10px 20px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; color: white; width: 200px; }
+    body.male .buttons button { background: #1565c0; }
+    body.female .buttons button { background: #d81b60; }
+    .popup { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; z-index:9999; }
+    .popup-content { background:#fff; padding:20px; border-radius:10px; max-width:320px; width:90%; text-align:center; }
+    .popup-content h3 { font-size: 20px; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img id="profileImage" src="/images/default-avatar.png" class="profile-image" alt="Profil Resmi" />
+    <h2 id="displayName">Kullanıcı</h2>
+    <p id="age">Yaş</p>
+    <div class="bio" id="bio">Tanıtım yazısı</div>
+    <div class="gallery" id="gallery"></div>
+    <div class="buttons">
+      <button id="giftBtn">🎁 Hediye Gönder</button>
+      <button id="messageBtn">💌 Mesaj Gönder</button>
+      <button id="videoBtn">📹 Görüntülü Ara</button>
+    </div>
+  </div>
+
+  <div class="popup" id="tokenPopup"><div class="popup-content"><h3>💰 Jeton Al</h3><p>Yetersiz jeton. En az 50 jeton gereklidir.</p><ul style="text-align:left;">
+    <li>50 Jeton – 50 TL</li>
+    <li>100 Jeton – 75 TL</li>
+    <li>250 Jeton – 150 TL</li>
+    <li>500 Jeton – 250 TL</li>
+    <li>1000 Jeton – 400 TL</li>
+  </ul><p><strong>IBAN:</strong><br>TR91 0001 0040 0452 2812 1550 07<br>NEJLA KOÇ - Ziraat Bankası</p></div></div>
+
+  <div class="popup" id="goldPopup"><div class="popup-content"><h3>🌟 Pro Üyelik Gerekli</h3><p>Mesaj gönderebilmek için aşağıdaki üyeliklerden birini almanız gerekmektedir:</p>
+    <ul style="text-align:left;">
+      <li>1 Ay – 100 TL</li>
+      <li>3 Ay – 250 TL</li>
+      <li>6 Ay – 500 TL</li>
+      <li>1 Yıl – 800 TL</li>
+    </ul><p><strong>IBAN:</strong><br>TR91 0001 0040 0452 2812 1550 07<br>NEJLA KOÇ - Ziraat Bankası</p></div></div>
+
+  <div class="popup" id="videoPopup"><div class="popup-content"><h3>📹 Görüntülü Arama Paketi</h3><p>Bu özellik için Gold Video paketi gereklidir:</p>
+    <ul style="text-align:left;">
+      <li>1 Ay – 300 TL</li>
+      <li>3 Ay – 500 TL</li>
+      <li>6 Ay – 800 TL</li>
+      <li>1 Yıl – 1500 TL</li>
+    </ul><p><strong>IBAN:</strong><br>TR91 0001 0040 0452 2812 1550 07<br>NEJLA KOÇ - Ziraat Bankası</p></div></div>
 </body>
 </html>
