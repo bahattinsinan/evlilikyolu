@@ -150,9 +150,12 @@
           document.getElementById("city").textContent = data.city || "-";
           document.getElementById("gender").textContent = data.gender || "-";
           document.getElementById("lookingFor").textContent = data.lookingFor || "-";
-          document.getElementById("bio").textContent = data.bio || "-";
+          document.getElementById("bio").textContent = data.bio && data.bio.trim() !== "" ? data.bio : "Bilgi yok";
           if (data.photoURL) {
             document.getElementById("profileImage").src = data.photoURL;
+          }
+          else if (data.profileImage) {
+          document.getElementById("profileImage").src = data.profileImage;
           }
 
           // cinsiyete göre renk
